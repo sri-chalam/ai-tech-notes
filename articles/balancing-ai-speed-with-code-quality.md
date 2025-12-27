@@ -27,6 +27,8 @@ With the proliferation of AI coding tools in the past few years, the traditional
 
 Developers should see AI as a *smart assistant*—not a replacement.
 
+This shift demands a new approach: **mindful programming**. Drawing from the Buddhist practice of mindfulness—which emphasizes sustained, vigilant awareness applied to all activities—developers could bring the same quality of attention to AI-generated code. Rather than passively accepting outputs, this means actively questioning, verifying, and validating every suggestion.
+
 ## 🛠️ Key Principles of Thorough Verification
 
 To make the AI-assisted workflow effective, developers should verify that generated code:
@@ -131,7 +133,7 @@ AI coding agents are reshaping software development—speeding up scaffolding, r
 - Introduce security vulnerabilities  
 - Diverge from architectural norms  
 
-The goal is **not to blame developers or tools**, but to **empower teams** to use AI responsibly—combining speed with quality, performance, and security.
+The goal is to **empower teams** to use AI responsibly—combining speed with quality, performance, and security.
 
 Developers should continue to refine prompts, review code critically, and collaborate with AI agents in an iterative loop to deliver robust, maintainable, and efficient systems.
 
