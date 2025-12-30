@@ -1,6 +1,6 @@
 # AI Coding Agents: Balancing Speed with Quality, Performance, and Security
 
-AI coding agents have transformed how software is written. With their rapid code generation capabilities, developers can produce functional code faster than ever. While this speed is valuable, developers must balance rapid iteration with the time needed to ensure quality, efficiency, and maintainability. **This speed comes with a tradeoff: relying on AI alone—without detailed instructions and thorough verification—can lead to inefficient, insecure, or suboptimal code.**. Developers must remain actively involved in the process to ensure code quality, performance, security, reliability and best practices etc.
+AI coding agents have transformed how software is written. With their rapid code generation capabilities, developers can produce functional code faster than ever. While this speed is valuable, developers must balance rapid iteration with the time needed to ensure quality, efficiency, and maintainability. **This speed comes with a tradeoff: relying on AI alone—without detailed instructions and thorough verification—can lead to inefficient, insecure, or suboptimal code**. Developers must remain actively involved in the process to ensure code quality, performance, security, reliability and best practices etc.
 
 In fact, traditional software engineering practices like thorough code reviews are more important than ever, as AI's speed amplifies both quality code and potential issues.
 
@@ -47,12 +47,14 @@ Without explicit instructions and thorough review, AI-generated code may be synt
 
 ### 🚀 Scenario 1: Java List Element Removal – CPU Overhead with Large Lists
 
-Imagine a Java application where `CustomerDTO` has a list of up to **20,000 transactions**. A developer asks an AI agent to generate filtering logic but doesn’t specify:
+agent to generate filtering logic but doesn’t specify:
+Imagine a Java application where `CustomerDTO` has a list of transactions. This list can contain up to **20,000 transactions**. There is a business requirement to filter the customer's transactions to remove those that don't meet certain criteria. A developer asks an AI agent to generate this filtering logic but doesn't specify:
 
 - That transaction list size can be large  
 - That the code must be optimized for performance  
 
-Result: The agent generates code that removes elements directly from the list during iteration. In Java's `ArrayList`, removing items inside a loop triggers repeated shifts of all remaining elements—leading to major CPU overhead and poor performance.
+Result: The agent generates code that removes elements directly from the list during iteration (e.g., `transactionList.remove(index)` inside a loop).
+In Java's `ArrayList`, removing items inside a loop triggers repeated shifts of all remaining elements—leading to major CPU overhead and poor performance.
 
 **Why ArrayList removal is CPU-intensive:**  
 Each `ArrayList.remove(index)` call internally uses `System.arraycopy()` to shift all subsequent elements one position left to fill the gap. For a 20,000-item list where 5,000 items are removed sequentially:
@@ -60,17 +62,18 @@ Each `ArrayList.remove(index)` call internally uses `System.arraycopy()` to shif
 - Second removal: copies 19,998 elements  
 - This continues for all 5,000 removals
 
-The cumulative effect is **~87.5 million array element copies**, transforming what should be O(n) filtering into O(n²) complexity. 
-
+The cumulative effect is **~12.5 million array element shifts**.
 
 👉 This issue could have been avoided with a clear instruction to *optimize code for large size list*. Beyond detailed prompts, **developers should actively discuss implementation options with the AI agent**—asking questions like "What are the pros and cons of different filtering approaches?" This collaborative exploration helps identify trade-offs between performance, memory usage, and code readability before committing to an approach.
 
 
 ### ⚡ Scenario 2: Not Initializing List Capacity – Inefficiency at Scale
 
-Separately, an AI agent creates a DTO class from a JSON schema. Because the prompt didn’t mention that lists might contain very large collections (e.g., 20,000 items), the generated code uses a default Java list with no initial capacity.
+There is a requirement to create a Java CustomerDTO class from a provided JSON schema that contains the customer's transaction list. An AI coding agent is used to generate this code. Since the prompt does not indicate that there can be up to 20,000 transactions, the generated CustomerDTO class uses a default Java list with no initial capacity.
 
-Without explicit initialization, ArrayList starts with a default capacity of 10. When this is exceeded, Java creates a new array with 1.5× the current capacity (10 → 15 → 22 → 33...) and copies all existing elements. For a 20,000-item list, this triggers approximately 20 resize operations, each requiring a full array copy—resulting in significant memory allocation overhead and performance degradation.
+Without explicit initialization, ArrayList starts with a default capacity of 10. When this is exceeded, Java creates a new array with 1.5× the current capacity (10 → 15 → 22 → 33...) and copies all existing elements. For a 20,000-item list, this triggers approximately 20 resize operations, each requiring a full array copy—resulting in considerable memory allocation overhead and performance degradation.
+
+The same capacity initialization problem occurs during data transformation. When CustomerDTO is converted to a different JSON format class (e.g., for external API consumption), the transformed class must also initialize its transaction list with appropriate capacity—otherwise, it suffers the same resize overhead during population.
 
 👉 Providing context about expected list sizes and usage patterns would have helped the AI generate more efficient code.
 
@@ -114,9 +117,6 @@ Organizations should document AI-specific guidelines to help teams maintain cons
 **Example: JUnit Testing Instructions**  
 Rather than repeatedly explaining testing conventions to AI agents, teams can create a comprehensive instruction file (e.g., `.github/instructions/junit-test-best-practices.instructions.md`) that covers FIRST principles, naming conventions, mocking strategies, and code examples. Developers then simply reference: *"Apply all rules from .github/instructions/junit-test-best-practices.instructions.md"* when requesting test generation.
 
-See a complete example at: [github.com/sri-chalam/junit-best-practices-ai](https://github.com/sri-chalam/junit-best-practices-ai)
-
-
 ## 🧠 AI's Most Valuable Benefit: Quick Learning and Collaboration
 
 One of the most valuable aspects of AI coding agents is the opportunity for **quick learning through collaboration**. Developers can engage in real-time dialogue—asking questions like "Is this code performant?", "Is this code unit test friendly?", or "What design alternatives should you consider, and what are their trade-offs?"—to rapidly understand trade-offs and improve their code before committing to an approach.
@@ -127,7 +127,7 @@ This creates a **collaborative feedback loop**—where AI accelerates creation a
 
 ## 🎯 Closing Thoughts
 
-AI coding agents are reshaping software development—speeding up scaffolding, reducing boilerplate, and enhancing developer productivity. But without careful verification and human oversight, AI-generated code can:
+AI coding agents are reshaping software development—**speeding software development, making debugging much faster, and helping developers quickly refactor code to improve performance, reliability, and security**. But without careful verification and human oversight, AI-generated code can:
 
 - Be inefficient at scale  
 - Introduce security vulnerabilities  
