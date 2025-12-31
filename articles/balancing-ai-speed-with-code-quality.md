@@ -93,6 +93,32 @@ Initializing the ArrayList with the expected capacity eliminates the resize over
 private List<Transaction> transactions = new ArrayList<>(10000);
 ```
 
+## 🔍 Guiding AI to Add Observability: Logs and Metrics Are Not Optional
+
+The previous section discussed guiding the AI coding agent to ensure generated code is performant. **Production observability through logs and metrics is critical, not optional**—yet AI coding agents rarely include it without explicit guidance. The lack of observability code severely impacts the ability to monitor application behavior in production and debug incidents effectively. **For every application feature, developers must ensure logs are captured and metrics are sent to observability platforms such as Splunk, Grafana, Datadog, or Prometheus.**
+
+Consider a requirement to retrieve customer transaction data for a specific time period from an external service like AWS S3 or a REST API. Without explicit observability requirements in the prompt, an AI coding agent will produce functional retrieval logic that successfully fetches the data—but omits all logging, metrics, and instrumentation.
+
+For example, when retrieving customer transaction data, essential observability includes:
+**Logs:**
+- Transaction retrieval started/completed with timestamp range
+- Any errors or exceptions encountered during retrieval
+- Validation warnings (e.g., duplicate transactions detected)
+
+**Metrics:**
+- Total transactions retrieved
+- Retrieval operation duration
+- Duplicate transaction count
+- Error rate
+
+These logs and metrics are essential for creating dashboards and alerts that enable rapid incident detection, diagnosis, and resolution.
+
+Without explicit guidance, AI coding agents will not know which attributes to log or which metrics to stream. Organizations should document observability standards in AI instruction files (e.g., .github/instructions/observability-standards.instructions.md) covering logging levels, required metrics, and platform-specific conventions. However, developers must still provide feature-specific guidance for each implementation.
+
+👉 Always explicitly request observability code when working with AI coding agents. Specify: required log statements, metric types and error conditions to monitor. This ensures production-ready code from the start rather than retrofitting observability later.
+
+👉 This observability example illustrates a broader principle: **AI coding agents need explicit guidance for every quality attribute**. Whether it's performance, scalability, security, reliability, or high availability—if you don't specify requirements in your prompt, the generated code will likely omit critical production-ready features.
+
 ## 👨‍💻 Best Practices for Working With AI Coding Agents
 
 Below are recommended best practices to maximize AI benefit while safeguarding code quality:
