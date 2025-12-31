@@ -4,4 +4,4 @@ This repository contains technical articles exploring AI-assisted software devel
 
 ## Articles
 
-- [AI Coding Agents: Balancing Speed with Quality, Performance, and Security](articles/balancing-ai-speed-with-code-quality.md)
+- [AI Coding Agents: The Quality-Speed Tradeoff](articles/balancing-ai-speed-with-code-quality.md)
