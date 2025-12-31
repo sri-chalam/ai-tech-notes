@@ -1,3 +1,5 @@
+![Balance AI Speed with Code Quality](images/balance-ai-speed-quality/balance-ai-speed-quality-title.png)
+
 # AI Coding Agents: The Quality-Speed Tradeoff
 
 AI coding agents have transformed how software is written. With their rapid code generation capabilities, developers can produce functional code faster than ever. While this speed is valuable, developers must balance rapid iteration with the time needed to ensure quality, efficiency, and maintainability. **This speed comes with a tradeoff: relying on AI alone—without detailed instructions and thorough verification—can lead to inefficient, insecure, or suboptimal code**. Developers must remain actively involved in the process to ensure code quality, performance, security, reliability, and adherence to best practices.
