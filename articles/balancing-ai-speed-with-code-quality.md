@@ -139,7 +139,7 @@ Treat AI output like any third-party contribution. Conduct thorough code reviews
 
 ### 🧠 Active Learning and Skill Preservation
 
-Developers build expertise through hands-on experience—making mistakes, debugging errors, and understanding why solutions work. When AI instruction files automate complex tasks like framework upgrades, refactoring, or debugging with a single click, there's a risk of skill atrophy over time. Without regular practice, developers may lose proficiency in critical skills like dependency management, migration strategies, and troubleshooting.
+Developers build expertise through hands-on experience—making mistakes, debugging errors, and understanding why solutions work. When AI instruction files automate complex tasks like framework upgrades or refactoring with a single click, or significantly accelerate problem identification that would otherwise take hours, **there's a risk of skill atrophy over time**. Without regular practice, developers may lose proficiency in critical skills like dependency management, migration strategies, and troubleshooting.
 
 To prevent this, developers should regularly review AI instruction files to understand what they automate and why. Periodically performing these tasks manually—even when automation exists—helps maintain expertise and enables teams to adapt when automated solutions don't fit unique scenarios.
 
