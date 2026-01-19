@@ -227,7 +227,7 @@ The upgrade process is automated through a series of steps that handle both envi
 
 ### Upgrade Steps
 
-*For detailed step-by-step execution instructions, see [java-17-to-21-upgrade-instructions.md](docs/ai-tasks/instructions/java-17-to-21-upgrade-instructions.md).*
+*For detailed step-by-step execution instructions, see [java-17-to-21-upgrade-instructions.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21-upgrade-instructions.md)
 
 1. **Identify and Set Project Root Directory**: Establish the working directory for all subsequent commands.
 
@@ -324,7 +324,7 @@ Once the file is in place, the upgrade can be executed by referencing the instru
 
 Download the instruction file from the following URL:
 ```
-https://github.com/sri-chalam/spring-petclinic-ai-java-upgrade/blob/main/docs/ai-tasks/instructions/java-17-to-21-upgrade-instructions.md
+https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21-upgrade-instructions.md
 ```
 
 Save this file in your Git repository that needs to be upgraded from Java 17 to Java 21. The suggested location is:
