@@ -1,4 +1,4 @@
-![Balance AI Speed with Code Quality](images/balance-ai-speed-quality/balance-ai-speed-quality-title.png)
+![Balance AI Speed with Code Quality](images/balance-ai-speed-quality-title.png)
 
 # AI Coding Agents: The Quality-Speed Tradeoff
 
