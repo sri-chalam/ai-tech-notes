@@ -446,10 +446,12 @@ Initialize the log file with the following structure:
 ```markdown
 # Java 21 Upgrade Log
 
-**Date**: YYYY-MM-DD
+**Timestamp**: YYYY-MM-DDTHH:MM:SS
+**Execution Time**: X seconds
 **Project**: [Project Name]
 **Upgrade**: Java 17 to Java 21
 **Status**: In Progress | Completed | Blocked
+**Total Execution Time**: X minutes Y seconds
 
 ---
 
@@ -461,7 +463,8 @@ Brief overview of the upgrade process and overall status. Update this section as
 
 ## Step 2: Java Version Detection
 
-**Date**: YYYY-MM-DD
+**Timestamp**: YYYY-MM-DDTHH:MM:SS
+**Execution Time**: X seconds
 
 ### Current Configuration
 - **Java Version Detected**: [version or "Not detected"]
