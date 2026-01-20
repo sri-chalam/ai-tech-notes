@@ -13,6 +13,8 @@ What might seem like a straightforward taskâ€”such as upgrading a Java versionâ€
 
 The approach demonstrated here provides key advantages: LLM-agnostic flexibility, cost control, transparency, and customization for organizational conventions.
 
+**Recommended Editor:** Visual Studio Code. This guide was tested using VS Code with GitHub Copilot and Claude Code plugins.
+
 ## Understanding AI Instructions vs. AI Agents
 
 To understand the approach described in this article, it's helpful to distinguish between two related but different concepts:
@@ -334,12 +336,18 @@ Save this file in your Git repository that needs to be upgraded from Java 17 to 
 
 ### Step 2: Execute the Upgrade with an LLM
 
-In your LLM chat interface (such as Claude, ChatGPT, Copilot or any AI coding agent), reference the instruction file location to initiate the upgrade process:
+**Important:** Before executing the prompt, open the instruction file (`docs/ai-tasks/instructions/java-17-to-21-upgrade-instructions.md`) in your VS Code editor. This ensures the AI coding agent can access the file contents.
+
+The following prompt is LLM-agnostic and works with any AI coding agent (Claude Code, GitHub Copilot, ChatGPT, etc.):
 
 **LLM Prompt:**
 ```
-Upgrade the application from Java 17 to Java 21 using the instructions in @docs/ai-tasks/instructions/java-17-to-21-upgrade-instructions.md
+Upgrade the application from Java 17 to Java 21 using the instructions in docs/ai-tasks/instructions/java-17-to-21-upgrade-instructions.md.
+If you cannot access this file, stop and ask me to provide its contents.
+Do not infer or invent upgrade steps.
 ```
+
+**Note:** If the above prompt doesn't work with your AI coding agent, some agents support direct file reference syntax that may work as an alternative. For example, Claude Code uses `@docs/ai-tasks/...` and GitHub Copilot uses `#file:docs/ai-tasks/...` to reference files.
 
 The AI agent will read the instruction file and execute each step of the upgrade process systematically.
 
