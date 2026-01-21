@@ -253,7 +253,7 @@ If any instruction elsewhere conflicts with this section, **this section takes p
   - What was changed
   - Why it was changed
   - Result (success or failure)
-- Logs must be written to: `/docs/ai-tasks/logs/java-21-upgrade-log.md`
+- Logs must be written to: `/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`
 
 
 ---
@@ -304,7 +304,6 @@ as complete until:
 ### Final Note to AI Agents
 This upgrade is a **controlled, auditable migration**, not an optimization exercise.  
 Correctness, traceability, and restraint are more important than speed.
-
 
 ## Overview
 These instructions guide an AI coding agent to upgrade a Java application from Java 17 to Java 21 using Amazon Corretto JDK.
@@ -414,7 +413,7 @@ When executing these instructions, the AI agent should:
 
 6. **Use Dynamic Values**: Prefer dynamically detecting versions and paths over hardcoded values to ensure the instructions work at the time of execution
 
-7. **Document All Changes**: Maintain an upgrade log file at `/docs/ai-tasks/logs/java-21-upgrade-log.md` to track all actions, decisions, and outcomes throughout the entire upgrade process (see "Logging Requirements" section below for detailed instructions)
+7. **Document All Changes**: Maintain an upgrade log file at `/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md` to track all actions, decisions, and outcomes throughout the entire upgrade process (see "Logging Requirements" section below for detailed instructions)
 
 8. **Multi-Module Project Awareness**: Always refer to the "Gradle Project Structure Patterns" section when locating and modifying build files. Do not assume all projects have a single root `build.gradle` file.
 
@@ -429,14 +428,14 @@ When executing these instructions, the AI agent should:
 Create and maintain the upgrade log at:
 
 ```
-/docs/ai-tasks/logs/java-21-upgrade-log.md
+/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md
 ```
 
 **Before starting Step 1**, create the directory structure and initialize the log file:
 
 ```bash
 mkdir -p docs/ai-tasks/logs
-touch docs/ai-tasks/logs/java-21-upgrade-log.md
+touch docs/ai-tasks/logs/java-17-to-21-upgrade-log.md
 ```
 
 ### Log File Structure
@@ -1454,7 +1453,7 @@ When compilation errors or test failures occur, follow this systematic approach 
    - **Behavioral Change**: API behavior changed in Java 21
    - **Other**: Uncategorized errors
 
-**Log the error information:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) of the extracted error details (file path, line number, error type, category, and full error message). This information will be used to document the error in either the "Fixes Applied" section (if resolved) or the "Unresolved Errors" section (if it cannot be fixed).
+**Log the error information:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of the extracted error details (file path, line number, error type, category, and full error message). This information will be used to document the error in either the "Fixes Applied" section (if resolved) or the "Unresolved Errors" section (if it cannot be fixed).
 
 ###### Error Resolution Step 2: Search for OpenRewrite Recipes
 
@@ -1513,7 +1512,7 @@ When compilation errors or test failures occur, follow this systematic approach 
    - If the error is resolved, continue to the next error (if any)
    - If the error persists, proceed to Step 3
 
-**Track recipe attempts:** Keep note of which OpenRewrite recipes you searched for and tried in the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) - you'll need this information for either:
+**Track recipe attempts:** Keep note of which OpenRewrite recipes you searched for and tried in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) - you'll need this information for either:
 - The "Fixes Applied" section if the recipe succeeds (document which recipe resolved the error)
 - The "Unresolved Errors" section under "Attempted Solutions" if the recipe fails
 
@@ -1550,7 +1549,7 @@ When compilation errors or test failures occur, follow this systematic approach 
 
 4. **Document the source** of the solution for future reference in the upgrade log file (see Documentation section below)
 
-**Track your research:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) of:
+**Track your research:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of:
 - Search queries you used (you'll need these for "Attempted Solutions" if the fix fails)
 - Sources found and URLs (you'll need these for the "Source" field in "Fixes Applied" if the fix succeeds, or "References" in "Unresolved Errors" if it fails)
 - Potential solutions identified (helps document what was attempted)
@@ -1633,7 +1632,7 @@ When compilation errors or test failures occur, follow this systematic approach 
    - Verify the specific error is resolved
    - Ensure no new errors are introduced
 
-**If the fix succeeds:** Immediately document it in the "Fixes Applied" section of the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) following the format specified in section 6.7.1. Include:
+**If the fix succeeds:** Immediately document it in the "Fixes Applied" section of the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) following the format specified in section 6.7.1. Include:
 - File path and line number
 - Error type and root cause
 - Solution applied (the specific code changes made)
@@ -1646,7 +1645,7 @@ This documentation should be done immediately while the details are fresh.
 
 **If the error cannot be resolved** after trying all strategies:
 
-1. **Create a detailed error report** in the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) including:
+1. **Create a detailed error report** in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) including:
    - Complete error message and stack trace
    - File path and line number
    - Error category (from Step 1)
@@ -1664,7 +1663,7 @@ This documentation should be done immediately while the details are fresh.
 
 **To implement stalled progress detection:**
 
-1. **Maintain a record** in the upgrade log file (`/docs/ai-tasks/logs/java-21-upgrade-log.md`) of errors encountered in each iteration:
+1. **Maintain a record** in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of errors encountered in each iteration:
    - Error signature (file path + line number + error message)
    - Iteration number when the error was first seen
    - Resolution attempts made
