@@ -267,7 +267,7 @@ The upgrade process is automated through a series of steps that handle both envi
 
 All fixes, changes, and unresolved errors are documented during the upgrade process in:
 ```
-/docs/ai-tasks/logs/java-21-upgrade-log.md
+/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md
 ```
 
 The log file contains:
@@ -469,7 +469,7 @@ The instruction file includes shell scripts in multiple sections (SDKMAN setup, 
 
 **Log the Outcome of Each Step**
 
-To debug issues such as determining whether a step in the upgrade process was missed, review the log markdown file at `/docs/ai-tasks/logs/java-21-upgrade-log.md`.
+To debug issues such as determining whether a step in the upgrade process was missed, review the log markdown file at `/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`.
 
 **Verify Log Output After Upgrade**
 
