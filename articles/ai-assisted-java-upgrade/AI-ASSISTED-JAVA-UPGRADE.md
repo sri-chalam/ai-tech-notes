@@ -295,7 +295,7 @@ This log provides full traceability of all changes made during the upgrade and s
 
 Just as good logging is essential for any production application, comprehensive logging is equally important for AI-assisted upgrades—it provides transparency into the decisions made at each step and their outcomes.
 
-**Example Log:** [java-17-to-21-upgrade-log-1.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/sample-logs/java-17-to-21/java-17-to-21-upgrade-log-1.md) — generated after upgrading a sample application from Java 17 to Java 21.
+**Example Log:** [java-17-to-21-upgrade-log-1.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21/sample-logs/java-17-to-21-upgrade-log-1.md) — generated after upgrading a sample application from Java 17 to Java 21.
 
 ## OpenRewrite and Recipes Used
 
