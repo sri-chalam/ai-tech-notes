@@ -125,7 +125,7 @@ Step 5: Configure Environment
 Step 6: Build Tool Detection
 - If Gradle project:
     - Detect Gradle Wrapper version
-    - If wrapper < 8.5 → Upgrade wrapper
+    - If wrapper < 8.14 → Upgrade wrapper
     - Else → SKIP
 - If Maven project → SKIP (DO NOT MODIFY Maven files)
 
@@ -955,7 +955,12 @@ echo ""
 If Amazon Corretto Java 21 is not installed, find and install the latest version:
 
 ```bash
-if [ "$JAVA21_ALREADY_INSTALLED" = false ]; then
+# Check if Amazon Corretto Java 21 is already installed using directory check
+if [ -n "$(find "$HOME/.sdkman/candidates/java" -maxdepth 1 -type d -name '21*-amzn' 2>/dev/null)" ]; then
+    echo "Skipping installation - Amazon Corretto Java 21 is already present"
+    JAVA21_ALREADY_INSTALLED=true
+else
+    JAVA21_ALREADY_INSTALLED=false
     # Find the latest Amazon Corretto Java 21 version
     LATEST_JAVA21=$(sdk list java | grep "21\..*amzn" | grep -v ">>>" | head -1 | awk '{print $NF}')
 
@@ -967,8 +972,6 @@ if [ "$JAVA21_ALREADY_INSTALLED" = false ]; then
     echo "Installing Amazon Corretto Java 21: $LATEST_JAVA21"
     sdk install java "$LATEST_JAVA21"
     echo "Amazon Corretto Java 21 installation complete"
-else
-    echo "Skipping installation - Amazon Corretto Java 21 is already present"
 fi
 ```
 
@@ -1211,7 +1214,7 @@ After upgrading, verify the new Gradle version:
 ./gradlew --version
 ```
 
-Expected output should show Gradle 8.14.4 and Java 21:
+Expected output should show Gradle 8.14.4:
 ```
 ------------------------------------------------------------
 Gradle 8.14.4
@@ -2067,7 +2070,7 @@ ARG VARIANT=21-bullseye
 ##### Pattern 2: JAVA_VERSION argument
 ```dockerfile
 # Before
-ARG JAVA_VERSION=17.0.7-ms
+ARG JAVA_VERSION=17.0.7-amzn
 
 # After
 ARG JAVA_VERSION=21.0.9-amzn
@@ -2089,7 +2092,7 @@ FROM [<registry>/]amazoncorretto:21-alpine
 ##### Pattern 4: SDKMAN installation in Dockerfile
 ```dockerfile
 # Before
-RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 17.0.7-ms && sdk use java 17.0.7-ms'
+RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 17.0.7-amzn && sdk use java 17.0.7-amzn'
 
 # After
 RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 21.0.9-amzn && sdk use java 21.0.9-amzn'

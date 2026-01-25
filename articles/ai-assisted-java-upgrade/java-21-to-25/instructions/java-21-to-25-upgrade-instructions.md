@@ -729,7 +729,7 @@ if [ -n "$BUILD_FILES" ]; then
             fi
         fi
 
-        # Check for Java toolchain with enum syntax: languageVersion = JavaLanguageVersion.of(JavaVersion.VERSION_17.majorVersion)
+        # Check for Java toolchain with enum syntax: languageVersion = JavaLanguageVersion.of(JavaVersion.VERSION_21.majorVersion)
         VERSION_TOOLCHAIN_ENUM=$(grep -E "languageVersion\s*=\s*JavaLanguageVersion\.of\(JavaVersion\.VERSION_" "$build_file" | grep -oE "VERSION_[0-9]+" | grep -o "[0-9]\+" | head -1)
 
         # Use whichever version was found (prefer toolchain > toolchain enum > enum > compat)
@@ -765,9 +765,9 @@ echo "Current Java version detected: ${CURRENT_JAVA_VERSION:-Not found}"
 echo ""
 ```
 
-#### 2.2 Validate Java 17 Requirement
+#### 2.2 Validate Java 21 Requirement
 
-Verify that the detected Java version is 17:
+Verify that the detected Java version is 21:
 
 ```bash
 if [ -z "$CURRENT_JAVA_VERSION" ]; then
@@ -782,35 +782,35 @@ if [ -z "$CURRENT_JAVA_VERSION" ]; then
     echo "  - Custom build script logic"
     echo ""
     echo "CONTINUING: The OpenRewrite plugin will handle the upgrade intelligently."
-    echo "  - If Java is already at version 21, no changes will be made"
-    echo "  - If Java is at version 17, it will be upgraded to version 21"
+    echo "  - If Java is already at version 25, no changes will be made"
+    echo "  - If Java is at version 21, it will be upgraded to version 25"
     echo ""
     echo "Proceeding with remaining upgrade steps..."
     echo ""
-elif [ "$CURRENT_JAVA_VERSION" != "17" ]; then
+elif [ "$CURRENT_JAVA_VERSION" != "21" ]; then
     echo "=========================================="
     echo "WARNING: Java Version Mismatch"
     echo "=========================================="
     echo ""
-    echo "These instructions are designed to upgrade Java 17 applications to Java 21."
+    echo "These instructions are designed to upgrade Java 21 applications to Java 25."
     echo "Current Java version detected: $CURRENT_JAVA_VERSION"
     echo ""
-    if [ "$CURRENT_JAVA_VERSION" = "21" ]; then
-        echo "NOTE: Java 21 is already configured. The upgrade may not be necessary."
+    if [ "$CURRENT_JAVA_VERSION" = "25" ]; then
+        echo "NOTE: Java 25 is already configured. The upgrade may not be necessary."
         echo "However, the OpenRewrite plugin will verify and apply any missing updates."
         echo ""
         echo "Proceeding with remaining steps..."
         echo ""
     else
-        echo "CAUTION: The detected Java version is neither 17 nor 21."
+        echo "CAUTION: The detected Java version is neither 21 nor 25."
         echo "  - If this version is incorrect, the upgrade will still proceed"
-        echo "  - The OpenRewrite plugin will upgrade to Java 21 regardless"
+        echo "  - The OpenRewrite plugin will upgrade to Java 25 regardless"
         echo ""
         echo "Proceeding with remaining upgrade steps..."
         echo ""
     fi
 else
-    echo "✓ Java 17 detected - proceeding with upgrade to Java 21"
+    echo "✓ Java 21 detected - proceeding with upgrade to Java 25"
     echo ""
 fi
 ```
@@ -824,10 +824,10 @@ This script:
 - Validates the detected version and provides appropriate warnings
 
 **The script will CONTINUE execution in all cases:**
-- If Java 17 is detected: Proceeds with the upgrade as expected
-- If Java 21 is detected: Continues (OpenRewrite will skip unnecessary changes)
+- If Java 21 is detected: Proceeds with the upgrade as expected
+- If Java 25 is detected: Continues (OpenRewrite will skip unnecessary changes)
 - If the version cannot be identified: Continues with a warning (OpenRewrite will handle the upgrade intelligently)
-- If a different version is detected: Continues with a caution message (OpenRewrite will upgrade to Java 21)
+- If a different version is detected: Continues with a caution message (OpenRewrite will upgrade to Java 25)
 
 ---
 
@@ -883,31 +883,31 @@ This should display the SDKMAN version information.
 
 ---
 
-### Step 4: Install Amazon Corretto Java 21
+### Step 4: Install Amazon Corretto Java 25
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 4:**
-Update the "Step 4: Install Amazon Corretto Java 21" section in the log file with:
-- Note if Amazon Corretto Java 21 was already installed or newly installed
+Update the "Step 4: Install Amazon Corretto Java 25" section in the log file with:
+- Note if Amazon Corretto Java 25 was already installed or newly installed
 - Log the Java version (output of `java -version` command)
 - Installation path
 - Any installation issues or warnings
 
 
-#### 4.1 Check if Amazon Corretto Java 21 is Already Installed
+#### 4.1 Check if Amazon Corretto Java 25 is Already Installed
 
-First, check if Amazon Corretto Java 21 is already installed locally:
+First, check if Amazon Corretto Java 25 is already installed locally:
 
 ```bash
-if sdk list java | grep -v "local only" | grep -q "21\..*amzn"; then
-    echo "Amazon Corretto Java 21 is already installed"
-    JAVA21_ALREADY_INSTALLED=true
+if sdk list java | grep -v "local only" | grep -q "25\..*amzn"; then
+    echo "Amazon Corretto Java 25 is already installed"
+    JAVA25_ALREADY_INSTALLED=true
 else
-    echo "Amazon Corretto Java 21 is not installed"
-    JAVA21_ALREADY_INSTALLED=false
+    echo "Amazon Corretto Java 25 is not installed"
+    JAVA25_ALREADY_INSTALLED=false
 fi
 ```
 
-This checks if any Amazon Corretto Java 21 version is installed locally by filtering out the "local only" header and searching for installed versions.
+This checks if any Amazon Corretto Java 25 version is installed locally by filtering out the "local only" header and searching for installed versions.
 
 #### 4.2 Prepare Organization Trusted Certificates (if applicable)
 
@@ -950,54 +950,57 @@ echo ""
 
 **Note:** The import process in section 2.4 will automatically detect and import any certificates present in `~/trusted-certs`, regardless of the response to this prompt.
 
-#### 4.3 Find and Install Latest Amazon Corretto Java 21 (if not present)
+#### 4.3 Find and Install Latest Amazon Corretto Java 25 (if not present)
 
-If Amazon Corretto Java 21 is not installed, find and install the latest version:
+If Amazon Corretto Java 25 is not installed, find and install the latest version:
 
 ```bash
-if [ "$JAVA21_ALREADY_INSTALLED" = false ]; then
-    # Find the latest Amazon Corretto Java 21 version
-    LATEST_JAVA21=$(sdk list java | grep "21\..*amzn" | grep -v ">>>" | head -1 | awk '{print $NF}')
+# Check if Amazon Corretto Java 25 is already installed using directory check
+if [ -n "$(find "$HOME/.sdkman/candidates/java" -maxdepth 1 -type d -name '25*-amzn' 2>/dev/null)" ]; then
+    echo "Skipping installation - Amazon Corretto Java 25 is already present"
+    JAVA25_ALREADY_INSTALLED=true
+else
+    JAVA25_ALREADY_INSTALLED=false
+    # Find the latest Amazon Corretto Java 25 version
+    LATEST_JAVA25=$(sdk list java | grep "25\..*amzn" | grep -v ">>>" | head -1 | awk '{print $NF}')
 
-    if [ -z "$LATEST_JAVA21" ]; then
-        echo "Error: No Amazon Corretto Java 21 versions found"
+    if [ -z "$LATEST_JAVA25" ]; then
+        echo "Error: No Amazon Corretto Java 25 versions found"
         exit 1
     fi
 
-    echo "Installing Amazon Corretto Java 21: $LATEST_JAVA21"
-    sdk install java "$LATEST_JAVA21"
-    echo "Amazon Corretto Java 21 installation complete"
-else
-    echo "Skipping installation - Amazon Corretto Java 21 is already present"
+    echo "Installing Amazon Corretto Java 25: $LATEST_JAVA25"
+    sdk install java "$LATEST_JAVA25"
+    echo "Amazon Corretto Java 25 installation complete"
 fi
 ```
 
 This script:
-- Dynamically finds the latest Amazon Corretto Java 21 version available at the time of execution
+- Dynamically finds the latest Amazon Corretto Java 25 version available at the time of execution
 - Installs it only if not already present
 - Provides clear feedback about what action was taken
 
-#### 4.4 Import Organization Trusted Certificates into Java 21 (if applicable)
+#### 4.4 Import Organization Trusted Certificates into Java 25 (if applicable)
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 4.4:**
 Update the "Step 4.4: Import Organization Trusted Certificates" section in the log file with:
 - Whether certificates were imported (yes/no)
-- If skipped, reason for skipping (Java 21 already installed, no certificates found, etc.)
+- If skipped, reason for skipping (Java 25 already installed, no certificates found, etc.)
 - Total number of certificates imported
 - Names of each certificate imported (the alias names used)
 - Success/failure status for each certificate import
 - Any import errors or warnings encountered
 
-**Only if Amazon Corretto Java 21 was freshly installed in section 3.3**, it is **CRITICAL** to import any organization trusted certificates into the Java keystore. Without these certificates, the application may fail to connect to internal services or repositories that use organization-specific SSL certificates:
+**Only if Amazon Corretto Java 25 was freshly installed in section 3.3**, it is **CRITICAL** to import any organization trusted certificates into the Java keystore. Without these certificates, the application may fail to connect to internal services or repositories that use organization-specific SSL certificates:
 
 ```bash
-# Only proceed if Java 21 was installed (not if installation was skipped)
-if [ "$JAVA21_ALREADY_INSTALLED" = false ]; then
-    # Get the installed Java 21 version and set JAVA_HOME
-    JAVA21_VERSION=$(sdk list java | grep "21\..*amzn" | head -1 | awk '{print $NF}')
+# Only proceed if Java 25 was installed (not if installation was skipped)
+if [ "$JAVA25_ALREADY_INSTALLED" = false ]; then
+    # Get the installed Java 25 version and set JAVA_HOME
+    JAVA25_VERSION=$(sdk list java | grep "25\..*amzn" | head -1 | awk '{print $NF}')
 
-    if [ -n "$JAVA21_VERSION" ]; then
-        export JAVA_HOME=$(sdk home java "$JAVA21_VERSION")
+    if [ -n "$JAVA25_VERSION" ]; then
+        export JAVA_HOME=$(sdk home java "$JAVA25_VERSION")
         echo "JAVA_HOME set to: $JAVA_HOME"
 
         # Check if trusted certs directory exists and contains certificates
@@ -1054,15 +1057,15 @@ if [ "$JAVA21_ALREADY_INSTALLED" = false ]; then
             echo "Skipping certificate import"
         fi
     else
-        echo "Error: Could not determine Java 21 version for certificate import"
+        echo "Error: Could not determine Java 25 version for certificate import"
     fi
 else
-    echo "Skipping certificate import - Java 21 was already installed (certificates may have been imported previously)"
+    echo "Skipping certificate import - Java 25 was already installed (certificates may have been imported previously)"
 fi
 ```
 
 This script:
-- Only attempts to import certificates if Java 21 was freshly installed (not if it was already present)
+- Only attempts to import certificates if Java 25 was freshly installed (not if it was already present)
 - Checks if the `~/trusted-certs` directory exists
 - Only processes files with `.pem`, `.cer`, or `.crt` extensions
 - Creates a unique alias for each certificate using the certificate name and current date
@@ -1072,31 +1075,31 @@ This script:
 - Lists the imported certificates for verification using the current date in the alias
 
 **Important Notes:**
-- If Java 21 was already installed before running these instructions, certificate import is skipped (assuming certificates were imported during the initial installation)
+- If Java 25 was already installed before running these instructions, certificate import is skipped (assuming certificates were imported during the initial installation)
 - The default cacerts password is `changeit` (this is the standard Java default)
-- If you need to re-import certificates into an existing Java installation, you can manually run the import commands or temporarily set `JAVA21_ALREADY_INSTALLED=false`
+- If you need to re-import certificates into an existing Java installation, you can manually run the import commands or temporarily set `JAVA25_ALREADY_INSTALLED=false`
 
-#### 4.5 Set Java 21 as Default (Optional)
+#### 4.5 Set Java 25 as Default (Optional)
 
-To make Java 21 the default version for all new shell sessions:
+To make Java 25 the default version for all new shell sessions:
 
 ```bash
-# Get the installed Java 21 version (either newly installed or already present)
-JAVA21_VERSION=$(sdk list java | grep "21\..*amzn" | head -1 | awk '{print $NF}')
+# Get the installed Java 25 version (either newly installed or already present)
+JAVA25_VERSION=$(sdk list java | grep "25\..*amzn" | head -1 | awk '{print $NF}')
 
-if [ -n "$JAVA21_VERSION" ]; then
-    SDKMAN_AUTO_ANSWER=true sdk default java "$JAVA21_VERSION"
-    echo "Set $JAVA21_VERSION as default Java version"
+if [ -n "$JAVA25_VERSION" ]; then
+    SDKMAN_AUTO_ANSWER=true sdk default java "$JAVA25_VERSION"
+    echo "Set $JAVA25_VERSION as default Java version"
 else
-    echo "Error: Could not find Amazon Corretto Java 21 version"
+    echo "Error: Could not find Amazon Corretto Java 25 version"
 fi
 ```
 
-This dynamically identifies the installed Java 21 version and sets it as default.
+This dynamically identifies the installed Java 25 version and sets it as default.
 
-#### 4.6 Verify Java 21 Installation
+#### 4.6 Verify Java 25 Installation
 
-Confirm Java 21 is active:
+Confirm Java 25 is active:
 
 ```bash
 java -version
@@ -1104,9 +1107,9 @@ java -version
 
 Expected output should show:
 ```
-openjdk version "21.0.x" 2024-xx-xx LTS
-OpenJDK Runtime Environment Corretto-21.0.x.x.x
-OpenJDK 64-Bit Server VM Corretto-21.0.x.x.x
+openjdk version "25.0.x" 2025-xx-xx LTS
+OpenJDK Runtime Environment Corretto-25.0.x.x.x
+OpenJDK 64-Bit Server VM Corretto-25.0.x.x.x
 ```
 
 ---
@@ -1119,10 +1122,10 @@ Update the "Step 5: Update Project Configuration" section in the log file with:
 
 #### 5.1 Set JAVA_HOME Environment Variable
 
-Ensure JAVA_HOME points to the correct Java 21 installation:
+Ensure JAVA_HOME points to the correct Java 25 installation:
 
 ```bash
-export JAVA_HOME=$(sdk home java 21.0.9-amzn)
+export JAVA_HOME=$(sdk home java 25.0.1-amzn)
 echo $JAVA_HOME
 ```
 
@@ -1174,12 +1177,12 @@ grep "distributionUrl" gradle/wrapper/gradle-wrapper.properties
 
 This will display the current Gradle version being used by the wrapper.
 
-#### 6.3 Verify Java 21 Compatibility
+#### 6.3 Verify Java 25 Compatibility
 
 **Only proceed if `GRADLE_WRAPPER_EXISTS=true`.**
 
 Gradle versions have specific Java compatibility requirements:
-- **Gradle 8.14.4+**: Preferred for executing OpenRewrite recipes with the latest Gradle 8.x version.
+- **Gradle 9.3.0+**: Preferred for executing OpenRewrite recipes with the latest Gradle 9.x version.
 
 To check your current Gradle version:
 
@@ -1192,14 +1195,14 @@ To check your current Gradle version:
 **Only proceed if `GRADLE_WRAPPER_EXISTS=true`.**
 
 **Check the Gradle version before upgrading:**
-- If `GRADLE_VERSION` >= 8.14: **SKIP this upgrade step** 
-- If `GRADLE_VERSION` <= 8.13: Proceed with upgrading to Gradle 8.14.4.
+- If `GRADLE_VERSION` >= 9.3.0: **SKIP this upgrade step**
+- If `GRADLE_VERSION` <= 9.2.1: Proceed with upgrading to Gradle 9.3.0
 
 ```bash
-./gradlew wrapper --gradle-version=8.14.4
+./gradlew wrapper --gradle-version=9.3.0
 ```
 
-This command will update the Gradle wrapper files to use version 8.14.4.
+This command will update the Gradle wrapper files to use version 9.3.0
 
 #### 6.5 Verify Gradle Wrapper Upgrade
 
@@ -1211,27 +1214,27 @@ After upgrading, verify the new Gradle version:
 ./gradlew --version
 ```
 
-Expected output should show Gradle 8.14.4 and Java 21:
+Expected output should show Gradle 9.3.0:
 ```
 ------------------------------------------------------------
-Gradle 8.14.4
+Gradle 9.3.0
 ------------------------------------------------------------
 
-Build time:   2024-xx-xx xx:xx:xx UTC
+Build time:   2025-xx-xx xx:xx:xx UTC
 Revision:     <revision-hash>
 
 Kotlin:       1.9.x
 Groovy:       3.0.x
 Ant:          Apache Ant(TM) version 1.10.x compiled on <date>
-JVM:          21.0.x (Amazon.com Inc. 21.0.x+xx-LTS)
+JVM:          25.0.x (Amazon.com Inc. 25.0.x+xx-LTS)
 OS:           Mac OS X 14.x.x aarch64
 ```
 
 ---
 
-### Step 6a: Upgrade Known Java 21 Incompatible Libraries and Plugins
+### Step 6a: Upgrade Known Java 25 Incompatible Libraries and Plugins
 
-Certain libraries and plugins are known to require version upgrades or replacement for Java 21 compatibility. Proactively addressing these **before** running OpenRewrite and the build avoids unnecessary iteration cycles where the AI agent discovers and fixes these issues through trial and error.
+Certain libraries and plugins are known to require version upgrades or replacement for Java 25 compatibility. Proactively addressing these **before** running OpenRewrite and the build avoids unnecessary iteration cycles where the AI agent discovers and fixes these issues through trial and error.
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 6a:**
 Update the "Step 6a: Library Upgrades" section in the log file with:
@@ -1274,7 +1277,7 @@ grep -i "lombok" gradle.properties 2>/dev/null
 grep -A1 "lombok" gradle/libs.versions.toml 2>/dev/null
 ```
 
-<!-- for Java 21 the lombok version 1.18.30 is sufficient. However, there is
+<!-- for Java 25 the lombok version 1.18.40 is sufficient. However, there is
 no harm in using the latest lombok release version.
 As of writing the article, the latest version is 1.18.42 -->
 **Upgrade Lombok to the latest version (minimum 1.18.42 required):**
@@ -1399,8 +1402,11 @@ mapstruct = "<LATEST_VERSION>"
 ```
 
 #### 6a.3 Replace google-java-format Plugin with Spotless (If Present)
+<!-- Google Java Format plugin may not be used in Java 21 projects.
+Leaving this section to take care of any legacy projects, which have not removed the plugin.
+ -->
 
-The `google-java-format` plugin does not work with Java 21. If this plugin is present, comment it out and add the Spotless plugin as a replacement.
+The `google-java-format` plugin does not even work with Java 21. If this plugin is present, comment it out and add the Spotless plugin as a replacement.
 
 **Logging for this step:**
 - If google-java-format is not found: Log "google-java-format not present - skipped"
@@ -1531,7 +1537,7 @@ If Spotless was added, also verify the plugin is configured correctly:
 
 ### Step 7: Use OpenRewrite to Migrate Java Code
 
-OpenRewrite is an automated refactoring tool that can help migrate Java code from Java 17 to Java 21.
+OpenRewrite is an automated refactoring tool that can help migrate Java code from Java 21 to Java 25.
 
 **Before proceeding with Step 7:** Review the "Gradle Project Structure Patterns" section to understand where build files may be located in single-module vs. multi-module projects.
 
@@ -1566,7 +1572,7 @@ find . -type f \( -name "build.gradle" -o -name "build.gradle.kts" \) -exec grep
 
 > **Multi-Module Project Note:** Add the plugin to the build file that contains other plugins. This may be the root build file or a submodule build file. See "Gradle Project Structure Patterns" for guidance.
 
-If the OpenRewrite plugin is not present, or if a newer version is required for Java 17 to 21 migration, add or update it in the `plugins` section of your build file:
+If the OpenRewrite plugin is not present, or if a newer version is required for Java 21 to 25 migration, add or update it in the `plugins` section of your build file:
 
 ```groovy
 plugins {
@@ -1601,16 +1607,16 @@ The `rewrite-migrate-java` recipe provides automated refactoring rules for Java 
 
 #### 7.4 Run Rewrite Migration
 
-Execute the OpenRewrite migration to automatically refactor code for Java 21 compatibility. Pass the recipes directly as command line parameters:
+Execute the OpenRewrite migration to automatically refactor code for Java 25 compatibility. Pass the recipes directly as command line parameters:
 
 ```bash
 ./gradlew rewriteRun \
-  -Drewrite.activeRecipes=org.openrewrite.java.migrate.UpgradeToJava21,\
+  -Drewrite.activeRecipes=org.openrewrite.java.migrate.UpgradeToJava25,\
 org.openrewrite.java.migrate.SwitchPatternMatching
 ```
 
 **Recipe Descriptions:**
-- `UpgradeToJava21` - Core Java 21 upgrade recipe that updates deprecated APIs and patterns
+- `UpgradeToJava25` - Core Java 25 upgrade recipe that updates deprecated APIs and patterns
 - `SwitchPatternMatching` - Applies pattern matching in switch statements (Java 21 feature)
 
 **Why pass recipes via command line?**
@@ -1619,10 +1625,10 @@ org.openrewrite.java.migrate.SwitchPatternMatching
 - Keeps the build configuration clean and focused on ongoing build tasks
 
 This command will:
-- Analyze the codebase for Java 17 to Java 21 migration opportunities
+- Analyze the codebase for Java 21 to Java 25 migration opportunities
 - Apply automated refactoring rules for the specified recipes
 - Update deprecated APIs and patterns
-- Use a few simple and safe Java 21 features
+- Use a few simple and safe Java 25 features
 - Modify source files
 
 #### 7.5 Review Changes
@@ -1634,9 +1640,9 @@ git diff
 ```
 
 OpenRewrite makes changes directly to source files, so use git to review what was modified. Common changes include:
-- Updated API usage for Java 21
+- Updated API usage for Java 25
 - Removed deprecated method calls
-- Updated language constructs to use Java 21 features
+- Updated language constructs to use Java 25 features
 - Fixed compatibility issues
 
 #### 7.6 Verify Migration Success
@@ -1706,8 +1712,8 @@ After running the OpenRewrite migration and reviewing changes, iteratively fix a
   - Fix the errors using the **Error Resolution Methodology** (see section 7.7.1 below)
   - Common issues to address:
     - Deprecated APIs not handled by OpenRewrite
-    - Changed method signatures in Java 21
-    - New restrictions or requirements in Java 21
+    - Changed method signatures in Java 25
+    - New restrictions or requirements in Java 25
     - Third-party library compatibility issues
 3. Re-run the build after making fixes
 4. **Repeat steps 2-3 with the following exit conditions:**
@@ -1723,10 +1729,10 @@ After running the OpenRewrite migration and reviewing changes, iteratively fix a
   - Analyze test failure messages carefully
   - Fix test failures using the **Error Resolution Methodology** (see section 7.7.1 below)
   - Common test issues:
-    - Behavior changes in Java 21 APIs
+    - Behavior changes in Java 25 APIs
     - Timing or ordering differences
     - Mock/stub compatibility with new APIs
-    - Test assertions that rely on implementation details that changed in Java 21
+    - Test assertions that rely on implementation details that changed in Java 25
 7. **Repeat steps 5-6 with the following exit conditions:**
    - **Success condition:** All tests pass
    - **Maximum iterations:** Up to 5 test/fix cycles
@@ -1755,12 +1761,12 @@ When compilation errors or test failures occur, follow this systematic approach 
    - **API Deprecation/Removal**: Method or class no longer available in Java 21
    - **API Signature Change**: Method parameters or return types changed
    - **Package Migration**: Classes moved to different packages (e.g., javax.* → jakarta.*)
-   - **Access Modifier Restriction**: New access restrictions in Java 21
+   - **Access Modifier Restriction**: New access restrictions in Java 25
    - **Third-party Library Incompatibility**: External dependencies not compatible with Java 21
-   - **Behavioral Change**: API behavior changed in Java 21
+   - **Behavioral Change**: API behavior changed in Java 25
    - **Other**: Uncategorized errors
 
-**Log the error information:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of the extracted error details (file path, line number, error type, category, and full error message). This information will be used to document the error in either the "Fixes Applied" section (if resolved) or the "Unresolved Errors" section (if it cannot be fixed).
+**Log the error information:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) of the extracted error details (file path, line number, error type, category, and full error message). This information will be used to document the error in either the "Fixes Applied" section (if resolved) or the "Unresolved Errors" section (if it cannot be fixed).
 
 ###### Error Resolution Step 2: Search for OpenRewrite Recipes
 
@@ -1779,12 +1785,12 @@ When compilation errors or test failures occur, follow this systematic approach 
 
 3. **Search for additional OpenRewrite recipes:**
 
-   **Note:** The `UpgradeToJava21` recipe executed in section 6.4 is a comprehensive recipe that includes many common migration sub-recipes. However, if you encounter compilation errors, there may be additional specialized recipes that weren't included or that need to be run independently.
+   **Note:** The `UpgradeToJava25` recipe executed in section 6.4 is a comprehensive recipe that includes many common migration sub-recipes. However, if you encounter compilation errors, there may be additional specialized recipes that weren't included or that need to be run independently.
 
    **How to search for recipes:**
-   - Visit the OpenRewrite recipe catalog: https://docs.openrewrite.org/recipes/java/migrate/upgradetojava21
+   - Visit the OpenRewrite recipe catalog: https://docs.openrewrite.org/recipes/java/migrate/upgradetojava25
    - Look for recipes that specifically address the error you're seeing
-   - Check if the recipe is already included in `UpgradeToJava21` by reviewing the recipe composition page
+   - Check if the recipe is already included in `UpgradeToJava25` by reviewing the recipe composition page
 
    **Examples of specialized recipes that might help:**
    - `org.openrewrite.java.migrate.RemovedModifierRestrictions` - Fix removed modifier restrictions
@@ -1795,7 +1801,7 @@ When compilation errors or test failures occur, follow this systematic approach 
 
    **When to run additional recipes:**
    - Only if the error is clearly related to a specific migration pattern
-   - If the recipe is NOT already part of `UpgradeToJava21` (check the recipe documentation)
+   - If the recipe is NOT already part of `UpgradeToJava25` (check the recipe documentation)
    - For specialized migrations like javax → jakarta that may not be in the core upgrade recipe
 
 4. **If a relevant recipe is found:**
@@ -1807,7 +1813,7 @@ When compilation errors or test failures occur, follow this systematic approach 
      Replace `<NewRecipeForTheError>` with the actual recipe name that addresses the error.
 
    **Why run only the new recipe?**
-   - The initial migration recipes (`UpgradeToJava21`, `PatternMatchingInstanceof`, `SwitchExpressions`, `SwitchPatternMatching`) have already been executed in section 6.4
+   - The initial migration recipes (`UpgradeToJava25`, `PatternMatchingInstanceof`, `SwitchExpressions`, `SwitchPatternMatching`) have already been executed in section 6.4
    - Re-running them is unnecessary and wasteful - they are idempotent but will re-scan the entire codebase
    - Running only the new recipe is faster and makes it easier to see what changed in git diff
    - OpenRewrite recipes are designed to be independent and can be run individually
@@ -1819,7 +1825,7 @@ When compilation errors or test failures occur, follow this systematic approach 
    - If the error is resolved, continue to the next error (if any)
    - If the error persists, proceed to Step 3
 
-**Track recipe attempts:** Keep note of which OpenRewrite recipes you searched for and tried in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) - you'll need this information for either:
+**Track recipe attempts:** Keep note of which OpenRewrite recipes you searched for and tried in the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) - you'll need this information for either:
 - The "Fixes Applied" section if the recipe succeeds (document which recipe resolved the error)
 - The "Unresolved Errors" section under "Attempted Solutions" if the recipe fails
 
@@ -1829,34 +1835,34 @@ When compilation errors or test failures occur, follow this systematic approach 
 
 1. **Construct an effective search query** using:
    - The exact error message (in quotes)
-   - "Java 21" or "Java 17 to 21 migration"
+   - "Java 25" or "Java 21 to 25 migration"
    - The affected API, class, or method name
-   - Example: `"java.lang.SecurityManager deprecated" Java 21 migration`
+   - Example: `"java.lang.SecurityManager deprecated" Java 25 migration`
 
 2. **Search authoritative sources in this order:**
    - **Official Java documentation:**
-     - Java 21 Release Notes: https://www.oracle.com/java/technologies/javase/21-relnotes.html
-     - Java 21 API Documentation: https://docs.oracle.com/en/java/javase/21/docs/api/
-     - JEP (JDK Enhancement Proposals) related to Java 21
+     - Java 21 Release Notes: https://www.oracle.com/java/technologies/javase/25-relnotes.html
+     - Java 25 API Documentation: https://docs.oracle.com/en/java/javase/25/docs/api/
+     - JEP (JDK Enhancement Proposals) related to Java 25
    - **Stack Overflow** with filters:
-     - Search with tags: [java-21], [java], [migration]
-     - Look for answers with high votes and recent dates (2023+)
+     - Search with tags: [java-25], [java], [migration]
+     - Look for answers with high votes and recent dates (2025+)
    - **GitHub Issues and Discussions:**
      - Search in repositories of affected third-party libraries
      - Look for migration guides and compatibility issues
    - **Technical blogs and migration guides:**
-     - Baeldung, DZone, InfoQ articles on Java 21 migration
+     - Baeldung, DZone, InfoQ articles on Java 25 migration
      - Spring Blog (if using Spring Framework)
 
 3. **Evaluate search results:**
    - Prioritize official documentation and well-established sources
    - Look for solutions that explain the root cause, not just workarounds
-   - Verify the solution applies to your specific Java version (17 → 21)
+   - Verify the solution applies to your specific Java version (21 → 25)
    - Check if the solution has been tested and validated by others
 
 4. **Document the source** of the solution for future reference in the upgrade log file (see Documentation section below)
 
-**Track your research:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of:
+**Track your research:** Keep a record in the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) of:
 - Search queries you used (you'll need these for "Attempted Solutions" if the fix fails)
 - Sources found and URLs (you'll need these for the "Source" field in "Fixes Applied" if the fix succeeds, or "References" in "Unresolved Errors" if it fails)
 - Potential solutions identified (helps document what was attempted)
@@ -1865,7 +1871,7 @@ When compilation errors or test failures occur, follow this systematic approach 
 
 **If Internet research provides a solution**, automatically apply the fix and document the changes in the upgrade log file:
 
-1. **Common fix patterns for Java 21 migration:**
+1. **Common fix patterns for Java 25 migration:**
 
    **A. Deprecated API Replacement:**
    ```java
@@ -1908,7 +1914,7 @@ When compilation errors or test failures occur, follow this systematic approach 
 
    > **Multi-Module Project Note:** Dependencies may be in root or submodule build files, or in version catalog files. Refer to "Gradle Project Structure Patterns" to locate the correct file.
 
-   - Check if a newer version of the library supports Java 21
+   - Check if a newer version of the library supports Java 25
    - Update the dependency version in your dependency configuration file:
      - [build.gradle](build.gradle) or [build.gradle.kts](build.gradle.kts) for traditional dependency declarations (check root and submodule directories)
      - [gradle/libs.versions.toml](gradle/libs.versions.toml) if using Gradle version catalogs
@@ -1939,7 +1945,7 @@ When compilation errors or test failures occur, follow this systematic approach 
    - Verify the specific error is resolved
    - Ensure no new errors are introduced
 
-**If the fix succeeds:** Immediately document it in the "Fixes Applied" section of the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) following the format specified in section 6.7.1. Include:
+**If the fix succeeds:** Immediately document it in the "Fixes Applied" section of the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) following the format specified in section 6.7.1. Include:
 - File path and line number
 - Error type and root cause
 - Solution applied (the specific code changes made)
@@ -1952,7 +1958,7 @@ This documentation should be done immediately while the details are fresh.
 
 **If the error cannot be resolved** after trying all strategies:
 
-1. **Create a detailed error report** in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) including:
+1. **Create a detailed error report** in the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) including:
    - Complete error message and stack trace
    - File path and line number
    - Error category (from Step 1)
@@ -1970,7 +1976,7 @@ This documentation should be done immediately while the details are fresh.
 
 **To implement stalled progress detection:**
 
-1. **Maintain a record** in the upgrade log file (`/docs/ai-tasks/logs/java-17-to-21-upgrade-log.md`) of errors encountered in each iteration:
+1. **Maintain a record** in the upgrade log file (`/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md`) of errors encountered in each iteration:
    - Error signature (file path + line number + error message)
    - Iteration number when the error was first seen
    - Resolution attempts made
@@ -2003,7 +2009,7 @@ This documentation should be done immediately while the details are fresh.
    - Result: Error persists (recipe doesn't cover this specific case)
 
 4. **Search Internet:**
-   - Query: `"Subject.getSubject() deprecated" Java 21 migration`
+   - Query: `"Subject.getSubject() deprecated" Java 25 migration`
    - Find: Official Java 21 release notes indicating `Subject.getSubject()` was removed
    - Solution: Use `Subject.current()` instead
 
@@ -2024,13 +2030,13 @@ This documentation should be done immediately while the details are fresh.
 
 ### Step 8: Update Dockerfile (If Present)
 
-If the repository contains a Dockerfile with a Java 17 base image, it needs to be updated to use Java 21.
+If the repository contains a Dockerfile with a Java 21 base image, it needs to be updated to use Java 25.
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 8:**
 Create a new "Step 8: Dockerfile Updates" section in the log file (or note "Not Applicable" if no Dockerfiles exist) with:
 - Whether Dockerfile(s) exist in the repository (Yes/No)
 - Number of Dockerfiles found and their paths
-- Java version detected in each Dockerfile (e.g., Java 17, Java 11, or "No Java version found")
+- Java version detected in each Dockerfile (e.g., Java 21, Java 17, or "No Java version found")
 - Changes made to each Dockerfile (list specific updates like base image changes, VARIANT updates)
 - Verification results for each Dockerfile
 - Docker build test results (if performed - Success/Failed/Skipped)
@@ -2045,54 +2051,54 @@ find . -name "Dockerfile*" -type f
 
 #### 8.2 Identify Java Version in Dockerfile
 
-For each Dockerfile found, check if it references Java 17:
+For each Dockerfile found, check if it references Java 21:
 
 ```bash
-grep -i "java.*17\|17.*java\|VARIANT=17\|JAVA_VERSION=17" <path-to-dockerfile>
+grep -i "java.*21\|21.*java\|VARIANT=21\|JAVA_VERSION=21" <path-to-dockerfile>
 ```
 
 #### 8.3 Update Dockerfile to Java 21
 
-If Java 17 is found in the Dockerfile, update it to Java 21. Common patterns to look for and update:
+If Java 21 is found in the Dockerfile, update it to Java 25. Common patterns to look for and update:
 
 ##### Pattern 1: VARIANT argument
 ```dockerfile
 # Before
-ARG VARIANT=17-bullseye
+ARG VARIANT=21-bullseye
 
 # After
-ARG VARIANT=21-bullseye
+ARG VARIANT=25-bullseye
 ```
 
 ##### Pattern 2: JAVA_VERSION argument
 ```dockerfile
 # Before
-ARG JAVA_VERSION=17.0.7-ms
+ARG JAVA_VERSION=21.0.9-amzn
 
 # After
-ARG JAVA_VERSION=21.0.9-amzn
+ARG JAVA_VERSION=25.0.1-amzn
 ```
 
-**Note:** Update the specific Java version to the latest available Java 21 version. For Amazon Corretto, use a version like `21.0.9-amzn` or later.
+**Note:** Update the specific Java version to the latest available Java 25 version. For Amazon Corretto, use a version like `25.0.1-amzn` or later.
 
 ##### Pattern 3: Base image with explicit Java version
 ```dockerfile
 # Before
-FROM [<registry>/]amazoncorretto:17-alpine
+FROM [<registry>/]amazoncorretto:21-alpine
 
 # After
-FROM [<registry>/]amazoncorretto:21-alpine
+FROM [<registry>/]amazoncorretto:25-alpine
 ```
 
-**Note:** The `[<registry>/]` prefix is optional and represents container registry paths like `ghcr.io/`, `docker.io/`, etc. If present, preserve the registry prefix and only update the Java version number from 17 to 21.
+**Note:** The `[<registry>/]` prefix is optional and represents container registry paths like `ghcr.io/`, `docker.io/`, etc. If present, preserve the registry prefix and only update the Java version number from 21 to 25.
 
 ##### Pattern 4: SDKMAN installation in Dockerfile
 ```dockerfile
 # Before
-RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 17.0.7-ms && sdk use java 17.0.7-ms'
+RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 21.0.9-amzn && sdk use java 21.0.9-amzn'
 
 # After
-RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 21.0.9-amzn && sdk use java 21.0.9-amzn'
+RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 25.0.1-amzn && sdk use java 25.0.1-amzn'
 ```
 
 #### 8.4 Verify Dockerfile Changes
@@ -2100,26 +2106,26 @@ RUN bash -lc '. /usr/local/sdkman/bin/sdkman-init.sh && sdk install java 21.0.9-
 After updating the Dockerfile, verify the changes:
 
 ```bash
-grep -i "java.*21\|21.*java\|VARIANT=21\|JAVA_VERSION=21" <path-to-dockerfile>
+grep -i "java.*25\|25.*java\|VARIANT=25\|JAVA_VERSION=25" <path-to-dockerfile>
 ```
 
-This should confirm that all Java 17 references have been updated to Java 21.
+This should confirm that all Java 21 references have been updated to Java 25.
 
 #### 8.5 Test Docker Build (Optional)
 
 If Docker is available, test building the image to ensure the Dockerfile changes are valid:
 
 ```bash
-docker build -f <path-to-dockerfile> -t test-java21-upgrade .
+docker build -f <path-to-dockerfile> -t test-java25-upgrade .
 ```
 
-This verifies that the Dockerfile syntax is correct and the Java 21 base image is accessible.
+This verifies that the Dockerfile syntax is correct and the Java 25 base image is accessible.
 
 ---
 
 ### Step 9: Update GitHub Actions Workflow Files (If Present)
 
-GitHub Actions workflow files may specify Java versions for CI/CD builds. If any workflow files reference Java 17, they need to be updated to Java 21.
+GitHub Actions workflow files may specify Java versions for CI/CD builds. If any workflow files reference Java 21, they need to be updated to Java 25.
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 8:**
 Create a new "Step 8: GitHub Actions Workflow Updates" section in the log file (or note "Not Applicable" if no workflows exist) with:
@@ -2137,59 +2143,59 @@ Search for workflow files in the repository:
 find .github/workflows -name "*.yml" -o -name "*.yaml" 2>/dev/null
 ```
 
-#### 9.2 Identify Java 17 References in Workflow Files
+#### 9.2 Identify Java 21 References in Workflow Files
 
-Check all workflow files for Java 17 references:
+Check all workflow files for Java 21 references:
 
 ```bash
-grep -r -i "java.*17\|17.*java\|java-version.*17" .github/workflows/ 2>/dev/null
+grep -r -i "java.*21\|21.*java\|java-version.*21" .github/workflows/ 2>/dev/null
 ```
 
-#### 9.3 Update Workflow Files to Java 21
+#### 9.3 Update Workflow Files to Java 25
 
-If Java 17 is found in workflow files, update it to Java 21. Common patterns to look for and update:
+If Java 21 is found in workflow files, update it to Java 25. Common patterns to look for and update:
 
 ##### Pattern 1: Matrix strategy with Java version
 ```yaml
 # Before
 strategy:
   matrix:
-    java: [ '17' ]
+    java: [ '21' ]
 
 # After
 strategy:
   matrix:
-    java: [ '21' ]
+    java: [ '25' ]
 ```
 
 ##### Pattern 2: Setup Java action with java-version
 ```yaml
 # Before
-- name: Set up JDK 17
-  uses: actions/setup-java@v3
-  with:
-    java-version: '17'
-    distribution: 'corretto'
-
-# After
 - name: Set up JDK 21
   uses: actions/setup-java@v3
   with:
     java-version: '21'
     distribution: 'corretto'
+
+# After
+- name: Set up JDK 25
+  uses: actions/setup-java@v3
+  with:
+    java-version: '25'
+    distribution: 'corretto'
 ```
 
-##### Pattern 3: Multiple Java versions in matrix (keeping Java 17 for compatibility testing)
+##### Pattern 3: Multiple Java versions in matrix (keeping Java 21 for compatibility testing)
 ```yaml
-# If testing against multiple Java versions and you want to keep Java 17 for compatibility:
+# If testing against multiple Java versions and you want to keep Java 21 for compatibility:
 strategy:
   matrix:
-    java: [ '17', '21' ]
+    java: [ '21', '25' ]
 
-# If upgrading completely to Java 21 only:
+# If upgrading completely to Java 25 only:
 strategy:
   matrix:
-    java: [ '21' ]
+    java: [ '25' ]
 ```
 
 **Note:** Ensure the `distribution` field is set to `'corretto'` to use Amazon Corretto JDK, consistent with the local development environment.
@@ -2199,10 +2205,10 @@ strategy:
 After updating the workflow files, verify the changes:
 
 ```bash
-grep -r -i "java.*21\|21.*java\|java-version.*21" .github/workflows/ 2>/dev/null
+grep -r -i "java.*25\|25.*java\|java-version.*25" .github/workflows/ 2>/dev/null
 ```
 
-This should confirm that Java version references have been updated to 21.
+This should confirm that Java version references have been updated to 25.
 
 #### 9.5 Validate Workflow Syntax (Optional)
 
@@ -2212,13 +2218,13 @@ If the GitHub CLI (`gh`) is installed, you can validate the workflow syntax:
 gh workflow list
 ```
 
-Or commit the changes and check the Actions tab on GitHub to ensure workflows run successfully with Java 21.
+Or commit the changes and check the Actions tab on GitHub to ensure workflows run successfully with Java 25.
 
 ---
 
 #### Step 10: Update AWS CodeBuild buildspec.yml Files (If Present)
 
-AWS CodeBuild buildspec.yml files may specify Java runtime versions. If any buildspec files reference Java 17, they need to be updated to Java 21.
+AWS CodeBuild buildspec.yml files may specify Java runtime versions. If any buildspec files reference Java 21, they need to be updated to Java 25.
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 10:**
 Create a new "Step 10: AWS CodeBuild buildspec Updates" section in the log file (or note "Not Applicable" if no buildspec files exist) with:
@@ -2236,17 +2242,17 @@ Search for buildspec files in the repository:
 find . -name "buildspec*.yml" -o -name "buildspec*.yaml" 2>/dev/null
 ```
 
-#### 10.2 Identify Java 17 References in buildspec Files
+#### 10.2 Identify Java 21 References in buildspec Files
 
-Check all buildspec files for Java 17 references:
+Check all buildspec files for Java 21 references:
 
 ```bash
-grep -r -i "java.*17\|corretto17\|runtime.*17" buildspec*.yml buildspec*.yaml 2>/dev/null
+grep -r -i "java.*21\|corretto21\|runtime.*21" buildspec*.yml buildspec*.yaml 2>/dev/null
 ```
 
-#### 10.3 Update buildspec Files to Java 21
+#### 10.3 Update buildspec Files to Java 25
 
-If Java 17 is found in buildspec files, update it to Java 21. Common patterns to look for and update:
+If Java 21 is found in buildspec files, update it to Java 25. Common patterns to look for and update:
 
 ##### Pattern 1: Runtime version in install phase
 ```yaml
@@ -2254,13 +2260,13 @@ If Java 17 is found in buildspec files, update it to Java 21. Common patterns to
 phases:
   install:
     runtime-versions:
-      java: corretto17
+      java: corretto21
 
 # After
 phases:
   install:
     runtime-versions:
-      java: corretto21
+      java: corretto25
 ```
 
 ##### Pattern 2: Explicit Java version specification
@@ -2269,13 +2275,13 @@ phases:
 phases:
   install:
     runtime-versions:
-      java: 17
+      java: 21
 
 # After
 phases:
   install:
     runtime-versions:
-      java: 21
+      java: 25
 ```
 
 ##### Pattern 3: Environment variables for Java version
@@ -2283,56 +2289,56 @@ phases:
 # Before
 env:
   variables:
-    JAVA_VERSION: "17"
-    JAVA_HOME: "/usr/lib/jvm/java-17-amazon-corretto"
+    JAVA_VERSION: "21"
+    JAVA_HOME: "/usr/lib/jvm/java-21-amazon-corretto"
 
 # After
 env:
   variables:
-    JAVA_VERSION: "21"
-    JAVA_HOME: "/usr/lib/jvm/java-21-amazon-corretto"
+    JAVA_VERSION: "25"
+    JAVA_HOME: "/usr/lib/jvm/java-25-amazon-corretto"
 ```
 
 ##### Pattern 4: CodeBuild image with Java version
 ```yaml
 # Before
 version: 0.2
-# Using standard image with Java 17
-# If comments reference Java 17, update them
+# Using standard image with Java 21
+# If comments reference Java 21, update them
 
 # After
 version: 0.2
-# Using standard image with Java 21
+# Using standard image with Java 25
 # Update any comments referencing Java version
 ```
 
-**Note:** Ensure you're using Amazon Corretto (`corretto21`) to maintain consistency with the local development environment.
+**Note:** Ensure you're using Amazon Corretto (`corretto25`) to maintain consistency with the local development environment.
 
 #### 10.4 Verify buildspec File Changes
 
 After updating the buildspec files, verify the changes:
 
 ```bash
-grep -r -i "java.*21\|corretto21\|runtime.*21" buildspec*.yml buildspec*.yaml 2>/dev/null
+grep -r -i "java.*25\|corretto25\|runtime.*25" buildspec*.yml buildspec*.yaml 2>/dev/null
 ```
 
-This should confirm that Java version references have been updated to 21.
+This should confirm that Java version references have been updated to 25.
 
 #### 10.5 Test CodeBuild Execution (Optional)
 
-If you have access to AWS CodeBuild, trigger a build to ensure the buildspec changes work correctly with Java 21:
+If you have access to AWS CodeBuild, trigger a build to ensure the buildspec changes work correctly with Java 25:
 
 ```bash
 aws codebuild start-build --project-name <your-project-name>
 ```
 
-Monitor the build logs to verify that Java 21 is being used during the build process.
+Monitor the build logs to verify that Java 25 is being used during the build process.
 
 ---
 
 ### Step 11: Execute Gradle Build with Test Cases
 
-After completing all the configuration updates and migrations, it's essential to verify that the application builds successfully and all tests pass with Java 21.
+After completing all the configuration updates and migrations, it's essential to verify that the application builds successfully and all tests pass with Java 25.
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 11:**
 Create a new "Step 11: Final Build and Test Verification" section in the log file with:
@@ -2348,7 +2354,7 @@ Create a new "Step 11: Final Build and Test Verification" section in the log fil
 
 #### 11.1 Clean Build with Tests
 
-Execute a clean build with all test cases to ensure the Java 21 upgrade is successful:
+Execute a clean build with all test cases to ensure the Java 25 upgrade is successful:
 
 ```bash
 ./gradlew clean build -x test
@@ -2356,7 +2362,7 @@ Execute a clean build with all test cases to ensure the Java 21 upgrade is succe
 
 This command will:
 - Clean the build directory to remove any cached artifacts from previous builds
-- Compile the source code with Java 21
+- Compile the source code with Java 25
 - Compile the test code
 - Run all unit tests
 - Run all integration tests (if configured)
@@ -2394,7 +2400,7 @@ open build/reports/tests/test/index.html
 
 #### 11.5 Verify JAR/WAR Artifacts
 
-Ensure that the build artifacts are created with Java 21:
+Ensure that the build artifacts are created with Java 25:
 
 ```bash
 # Check the build output directory
@@ -2408,7 +2414,7 @@ unzip -p build/libs/*.jar META-INF/MANIFEST.MF | grep -i "build-jdk"
 
 ## Post-Upgrade Manual Steps
 
-After the automated upgrade completes, perform these manual steps to ensure a fully functional Java 21 environment:
+After the automated upgrade completes, perform these manual steps to ensure a fully functional Java 25 environment:
 1. Running end-to-end tests and any other tests (e.g., performance tests, smoke tests, manual tests) that are not executed as part of the Gradle build to identify compatibility issues
 2. Manually updating any remaining deprecated APIs not handled by OpenRewrite
 3. Building and deploying the application in Dev and Integration environments
