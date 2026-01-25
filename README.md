@@ -4,4 +4,6 @@ This repository contains technical articles exploring AI-assisted software devel
 
 ## Articles
 
-- [AI Coding Agents: The Quality-Speed Tradeoff](articles/balancing-ai-speed-with-code-quality.md)
+- [AI Coding Agents: The Quality-Speed Tradeoff](articles/balancing-ai-speed-quality/balancing-ai-speed-with-code-quality.md)
+
+- [AI Assisted Java Upgrade](articles/ai-assisted-java-upgrade/AI-ASSISTED-JAVA-UPGRADE.md)
