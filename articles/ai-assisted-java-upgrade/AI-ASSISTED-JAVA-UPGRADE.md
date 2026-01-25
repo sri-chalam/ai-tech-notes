@@ -7,7 +7,7 @@ AI coding agents have become remarkably powerful tools, capable of implementing 
 
 To effectively leverage AI coding agents, detailed instructions are needed to communicate these organization-specific conventions and guide the agent toward the desired implementation approach. **Even as AI agents continue to mature and become more sophisticated, the need for clear and unambiguous instructions that follow team and organization-specific conventions will remain essential**.
 
-This article presents an approach to automating Java version upgrades using custom AI instruction files, along with a set of reusable instructions and best practices.
+This article presents an approach to automating Java version upgrades using custom AI instruction files, along with a set of reusable instructions and best practices. **This article explains the approach using a Java 17 to 21 upgrade as the primary example, but instruction files are available for both Java 17 to 21 and Java 21 to 25 upgrades**.
 
 What might seem like a straightforward task—such as upgrading a Java version—often involves numerous organization-specific decisions that AI agents need guidance to navigate effectively.
 
@@ -189,9 +189,9 @@ Before using the Java 17 to Java 21 upgrade instruction file, ensure your enviro
 ### Gradle Wrapper Version Compatibility
 
 For Java 21 compatibility, Gradle 8.5+ is sufficient. However, to use OpenRewrite recipes, the latest Gradle 8.x version is preferred:
-- **Gradle 8.14.3+**: Preferred for using the latest OpenRewrite version
+- **Gradle 8.14.4+**: Preferred for using the latest OpenRewrite version
 
-The upgrade instructions will automatically upgrade Gradle wrapper to version 8.14.3 if your current version is below 8.14.
+The upgrade instructions will automatically upgrade Gradle wrapper to version 8.14.4 if your current version is below 8.14.
 
 **Note:** The instructions will only upgrade Gradle wrapper if the current wrapper version is below 8.14. If your project already uses Gradle 8.14 or higher (including 9.x), the Gradle wrapper will not be modified. If your project does not contain a Gradle wrapper, one will not be installed.
 
@@ -237,7 +237,7 @@ The upgrade instructions automatically update Java version references in the fol
 - JavaVersion enum references (`JavaVersion.VERSION_17` → `JavaVersion.VERSION_21`)
 - OpenRewrite plugin addition/update (version 7.25.0+)
 - OpenRewrite dependencies and recipe configuration
-- Gradle wrapper upgrade to 8.14.3 (if current version < 8.14)
+- Gradle wrapper upgrade to 8.14.4 (if current version < 8.14)
 
 ## How the Upgrade Instructions Work
 
@@ -259,7 +259,7 @@ The upgrade process is automated through a series of steps that handle both envi
 
 5. **Trusted Certificates Import**: Automatically imports organization certificates from `~/trusted-certs/` into the Java 21 truststore during fresh installations
 
-6. **Upgrade Gradle Wrapper (If Needed)**: Upgrades Gradle wrapper to 8.14.3 if needed (see Prerequisites for details).
+6. **Upgrade Gradle Wrapper (If Needed)**: Upgrades Gradle wrapper to 8.14.4 if needed (see Prerequisites for details).
 
 7. **OpenRewrite Plugin**: Adds the OpenRewrite Gradle plugin to the project configuration. This is the same underlying tool used by AI-powered upgrade assistants like GitHub Copilot App Modernization and Amazon Q Developer.
 
@@ -541,10 +541,15 @@ One area for future improvement: the instructions currently hardcode version num
 
 Consider reviewing the instruction files to understand what they're doing—**relying solely on AI without understanding the underlying steps may gradually erode debugging and troubleshooting skills**.
 
-Additional instructions are being developed for Java 25 upgrades and other migration scenarios. Feedback on what works, what doesn't, and how these instructions have been adapted for different use cases is welcome and appreciated.
+An instruction file is also available for Java 21 to 25 upgrades. Feedback on what works, what doesn't, and how these instructions have been adapted for different use cases is welcome and appreciated.
 
 ## References
+
+- [Java 17 to 21 Upgrade Instructions](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21/instructions/java-17-to-21-upgrade-instructions.md) - AI instruction file for upgrading Java applications from version 17 to 21
+
+- [Java 21 to 25 Upgrade Instructions](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-21-to-25/instructions/java-21-to-25-upgrade-instructions.md) - AI instruction file for upgrading Java applications from version 21 to 25
 
 - [GitHub Awesome Copilot - Instructions](https://github.com/github/awesome-copilot/tree/main/instructions) - A community-contributed collection of instruction files for GitHub Copilot and AI coding agents
 
 - [OpenRewrite Java Recipes Catalog](https://docs.openrewrite.org/recipes/java)
+
