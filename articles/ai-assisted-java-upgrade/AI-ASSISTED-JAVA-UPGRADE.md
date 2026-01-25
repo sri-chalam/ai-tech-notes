@@ -140,6 +140,22 @@ Both OpenRewrite and GitHub Copilot App Modernization have **limitations** for t
 
 **Recommendation:** Organizations should evaluate both approaches with pilot projects to determine which option better aligns with their specific requirements, codebase complexity, and migration scale.
 
+## Benefits and Trade-offs of a Hybrid Approach
+
+Rather than choosing one tool exclusively, a hybrid approach uses OpenRewrite for deterministic transformations first, then leverages an LLM (guided by instruction files) to handle remaining issues. This combines the reliability of recipe-based migrations with the flexibility of AI-driven problem-solving.
+
+**Benefits**
+
+1. **Broader Coverage**: OpenRewrite handles known patterns with predefined recipes; the LLM, guided by the instruction file, addresses edge cases, deprecated APIs, and third-party libraries lacking recipes.
+
+2. **Iterative Problem Resolution**: When compilation errors or test failures remain after OpenRewrite, the LLM iteratively analyzes errors, researches solutions, and applies fixes—repeating until the build succeeds or a maximum iteration limit is reached.
+
+**Trade-offs**
+
+1. **Extended Execution Time**: The iterative build/fix cycle typically requires 20-30 minutes or more, depending on the number of issues to resolve.
+
+2. **Skill Atrophy Risk**: Over-reliance on automation may reduce familiarity with migration details. Reviewing upgrade logs helps mitigate this.
+
 ## AI Instruction Files - Limitations and Expectations
 
 When using AI instruction files (the approach demonstrated in this repository) for Java upgrades, it's important to understand the nature and limitations:
@@ -172,12 +188,12 @@ Before using the Java 17 to Java 21 upgrade instruction file, ensure your enviro
 
 ### Gradle Wrapper Version Compatibility
 
-For Java 21 compatibility, your Gradle version must meet these requirements:
-- **Gradle 8.5+**: Full support for Java 21 (recommended)
+For Java 21 compatibility, Gradle 8.5+ is sufficient. However, to use OpenRewrite recipes, the latest Gradle 8.x version is preferred:
+- **Gradle 8.14.3+**: Preferred for using the latest OpenRewrite version
 
-The upgrade instructions will automatically upgrade Gradle wrapper to version 8.11 if your current version is below 8.5.
+The upgrade instructions will automatically upgrade Gradle wrapper to version 8.14.3 if your current version is below 8.14.
 
-**Note:** The instructions will only upgrade Gradle wrapper if the current wrapper version is below 8.5. If your project already uses Gradle 8.5 or higher (including 9.x), the Gradle wrapper will not be modified. If your project does not contain a Gradle wrapper, one will not be installed.
+**Note:** The instructions will only upgrade Gradle wrapper if the current wrapper version is below 8.14. If your project already uses Gradle 8.14 or higher (including 9.x), the Gradle wrapper will not be modified. If your project does not contain a Gradle wrapper, one will not be installed.
 
 ### Compatibility Note
 
@@ -219,9 +235,9 @@ The upgrade instructions automatically update Java version references in the fol
 **Updates applied to build.gradle:**
 - sourceCompatibility and targetCompatibility (`'17'` → `'21'`)
 - JavaVersion enum references (`JavaVersion.VERSION_17` → `JavaVersion.VERSION_21`)
-- OpenRewrite plugin addition/update (version 6.30.3+)
+- OpenRewrite plugin addition/update (version 7.25.0+)
 - OpenRewrite dependencies and recipe configuration
-- Gradle wrapper upgrade to 8.11 (if current version < 8.5)
+- Gradle wrapper upgrade to 8.14.3 (if current version < 8.14)
 
 ## How the Upgrade Instructions Work
 
@@ -229,7 +245,7 @@ The upgrade process is automated through a series of steps that handle both envi
 
 ### Upgrade Steps
 
-*For detailed step-by-step execution instructions, see [java-17-to-21-upgrade-instructions.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21-upgrade-instructions.md)
+*For detailed step-by-step execution instructions, see [java-17-to-21-upgrade-instructions.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21/instructions/java-17-to-21-upgrade-instructions.md)
 
 1. **Identify and Set Project Root Directory**: Establish the working directory for all subsequent commands.
 
@@ -243,7 +259,7 @@ The upgrade process is automated through a series of steps that handle both envi
 
 5. **Trusted Certificates Import**: Automatically imports organization certificates from `~/trusted-certs/` into the Java 21 truststore during fresh installations
 
-6. **Upgrade Gradle Wrapper (If Needed)**: Upgrades Gradle wrapper to 8.11 if needed (see Prerequisites for details).
+6. **Upgrade Gradle Wrapper (If Needed)**: Upgrades Gradle wrapper to 8.14.3 if needed (see Prerequisites for details).
 
 7. **OpenRewrite Plugin**: Adds the OpenRewrite Gradle plugin to the project configuration. This is the same underlying tool used by AI-powered upgrade assistants like GitHub Copilot App Modernization and Amazon Q Developer.
 
@@ -277,6 +293,10 @@ The log file contains:
 
 This log provides full traceability of all changes made during the upgrade and serves as a reference for any manual interventions needed.
 
+Just as good logging is essential for any production application, comprehensive logging is equally important for AI-assisted upgrades—it provides transparency into the decisions made at each step and their outcomes.
+
+**Example Log:** [java-17-to-21-upgrade-log-1.md](https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/sample-logs/java-17-to-21/java-17-to-21-upgrade-log-1.md) — generated after upgrading a sample application from Java 17 to Java 21.
+
 ## OpenRewrite and Recipes Used
 
 **OpenRewrite** is an automated refactoring tool that applies code transformations through reusable security fixes, migrations, and code quality improvement recipes.
@@ -294,7 +314,7 @@ The upgrade instructions use the following OpenRewrite recipes:
 
 ## Organization Trusted Certificates
 
-If your organization uses custom trusted certificates (e.g., for internal Certificate Authorities or corporate proxies), these certificates need to be imported into the newly installed Java 21 keystore. To enable this, copy your organization's trusted certificates to a specific directory before executing the Java upgrade instructions. The LLM will then automatically import these certificates into Java 21 during the upgrade process.
+If your organization uses custom trusted certificates (e.g., for internal Certificate Authorities, or for TLS-inspecting proxies—also known as TLS interception, SSL forward proxy), these certificates need to be imported into the newly installed Java 21 keystore. To enable this, copy your organization's trusted certificates to a specific directory before executing the Java upgrade instructions. The LLM will then automatically import these certificates into Java 21 during the upgrade process.
 
 > **Note:** This step is important for OpenRewrite recipes to work correctly. The recipes download Gradle artifacts during execution, and missing organization certificates may cause PKIX SSL errors that prevent the upgrade from completing.
 
@@ -326,7 +346,7 @@ Once the file is in place, the upgrade can be executed by referencing the instru
 
 Download the instruction file from the following URL:
 ```
-https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21-upgrade-instructions.md
+https://github.com/sri-chalam/ai-tech-notes/blob/main/articles/ai-assisted-java-upgrade/java-17-to-21/instructions/java-17-to-21-upgrade-instructions.md
 ```
 
 Save this file in your Git repository that needs to be upgraded from Java 17 to Java 21. The suggested location is:
@@ -431,6 +451,8 @@ When first creating these instructions with AI assistance, it's easy to trust th
 
 While this worked functionally, OpenRewrite's documentation indicates this isn't best practice. Since Java upgrades are one-time migrations, these recipes don't need to be committed to the build file. Additionally, teams often want to run specific recipes (like static code analysis) separately and more frequently.
 
+Another critical example: the initial instructions specified an outdated Gradle OpenRewrite plugin version that was incompatible with the OpenRewrite recipe bom version. This version mismatch caused cryptic build failures that were difficult to diagnose, highlighting how AI models may reference older documentation or outdated version combinations.
+
 **Takeaway:** Always review AI-generated instructions critically and consult official documentation. Question the approach, discuss alternatives with the AI agent, and refine the instructions iteratively.
 
 ### The Build/Fix Loop Required Multiple Iterations
@@ -448,6 +470,21 @@ These instructions required refinement through trial and error, adding:
 - Comprehensive logging of all attempts and outcomes
 
 **Takeaway:** Build/fix loops need explicit guardrails, diagnostic procedures, and escalation strategies to prevent infinite loops and ensure transparency.
+
+### Provide Explicit Instructions for Common Library Upgrades
+
+While the build/fix loop can identify and upgrade necessary libraries, relying on it for common scenarios wastes iterations. Certain libraries—such as Lombok—typically require version upgrades with every Java upgrade. Rather than depending on the AI agent to discover this through internet searches and multiple build failures, provide explicit instructions to upgrade these common libraries and plugins before entering the build/fix loop.
+
+For this upgrade, the instructions were modified to explicitly handle (only if already used in the project—skipped otherwise):
+- **Lombok**: Upgrade to the latest version, which is backwards compatible, has fewer vulnerabilities, and includes more features
+- **MapStruct**: Upgrade to the latest version, which is backwards compatible
+- **Spotless**: Replace the deprecated/unmaintained Google Java Format plugin. Spotless is the community-preferred tool for enforcing Google’s style guide across major tech organizations.
+
+**Takeaway:** Identify libraries and plugins that commonly require upgrades during Java version migrations and add explicit upgrade instructions for them. Reserve the build/fix loop for unexpected issues rather than predictable compatibility updates.
+
+### TLS Interception Certificates Must Be Imported Before Upgrade
+
+Organizations using TLS interception (SSL forward proxy) must ensure certificates are available before executing the upgrade. In one test environment, the AI coding agent was unable to download the Gradle wrapper because the organization's TLS interception certificates had not been imported after installing the new JDK. Copying these certificates to `~/trusted-certs/` prior to running the upgrade resolved the issue.
 
 ### Additional Lessons
 
@@ -500,10 +537,11 @@ However, every codebase is unique. Users will likely need to:
 
 These instruction files should be treated as **collaborative starting points**. They work best when treated as **living documents, refined based on real-world experiences and shared improvements** with the community.
 
+One area for future improvement: the instructions currently hardcode version numbers for Gradle dependencies, plugins, and recipe boms. A future iteration could parameterize these values—defining them in a single section—making updates easier and reducing the risk of version incompatibilities.
+
 Consider reviewing the instruction files to understand what they're doing—**relying solely on AI without understanding the underlying steps may gradually erode debugging and troubleshooting skills**.
 
 Additional instructions are being developed for Java 25 upgrades and other migration scenarios. Feedback on what works, what doesn't, and how these instructions have been adapted for different use cases is welcome and appreciated.
-
 
 ## References
 
