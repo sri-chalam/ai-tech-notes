@@ -1079,7 +1079,7 @@ To make Java 21 the default version for all new shell sessions:
 JAVA21_VERSION=$(sdk list java | grep "21\..*amzn" | head -1 | awk '{print $NF}')
 
 if [ -n "$JAVA21_VERSION" ]; then
-    SDKMAN_AUTO_ANSWER=true sdk default java "$JAVA21_VERSION"
+    yes | sdk default java "$JAVA21_VERSION"
     echo "Set $JAVA21_VERSION as default Java version"
 else
     echo "Error: Could not find Amazon Corretto Java 21 version"
@@ -1276,7 +1276,8 @@ As of writing the article, the latest version is 1.18.42 -->
 First, find the latest Lombok version from Maven Central:
 ```bash
 # Search for latest Lombok release version on Maven Central
-curl -s "https://search.maven.org/solrsearch/select?q=g:org.projectlombok+AND+a:lombok&rows=1&wt=json" | grep -o '"latestVersion":"[^"]*"' | cut -d'"' -f4
+curl -s https://repo1.maven.org/maven2/org/projectlombok/lombok/maven-metadata.xml \
+  | xmllint --xpath "string(//versioning/latest)" -
 ```
 
 Alternatively, check the Lombok releases page: https://projectlombok.org/changelog
@@ -1317,7 +1318,8 @@ lombok = "<LATEST_VERSION>"
 
 #### 6a.2 Check and Upgrade MapStruct to Latest Version of 1.x (If Present)
 
-MapStruct is an annotation processor for generating type-safe bean mappers. If present, upgrade to the latest version for fewer vulnerabilities and better stability (MapStruct library latest versions are backwards compatible).
+MapStruct is an an
+notation processor for generating type-safe bean mappers. If present, upgrade to the latest version for fewer vulnerabilities and better stability (MapStruct library latest versions are backwards compatible).
 
 **🔴 Logging for this step:**
 - If MapStruct is not found: Log "MapStruct not present - skipped"
