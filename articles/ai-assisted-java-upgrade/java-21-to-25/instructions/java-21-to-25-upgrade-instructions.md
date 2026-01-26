@@ -1079,7 +1079,7 @@ To make Java 25 the default version for all new shell sessions:
 JAVA25_VERSION=$(sdk list java | grep "25\..*amzn" | head -1 | awk '{print $NF}')
 
 if [ -n "$JAVA25_VERSION" ]; then
-    SDKMAN_AUTO_ANSWER=true sdk default java "$JAVA25_VERSION"
+    yes | sdk default java "$JAVA25_VERSION"
     echo "Set $JAVA25_VERSION as default Java version"
 else
     echo "Error: Could not find Amazon Corretto Java 25 version"
@@ -1276,7 +1276,8 @@ As of writing the article, the latest version is 1.18.42 -->
 First, find the latest Lombok version from Maven Central:
 ```bash
 # Search for latest Lombok release version on Maven Central
-curl -s "https://search.maven.org/solrsearch/select?q=g:org.projectlombok+AND+a:lombok&rows=1&wt=json" | grep -o '"latestVersion":"[^"]*"' | cut -d'"' -f4
+curl -s https://repo1.maven.org/maven2/org/projectlombok/lombok/maven-metadata.xml \
+  | xmllint --xpath "string(//versioning/latest)" -
 ```
 
 Alternatively, check the Lombok releases page: https://projectlombok.org/changelog
@@ -1862,76 +1863,12 @@ When compilation errors or test failures occur, follow this systematic approach 
 
 **If Internet research provides a solution**, automatically apply the fix and document the changes in the upgrade log file:
 
-1. **Common fix patterns for Java 25 migration:**
-
-   **A. Deprecated API Replacement:**
-   ```java
-   // Before (Java 17)
-   Integer.parseInt("123", 10);
-
-   // After (Java 21) - if the API was removed or changed
-   // Use the recommended replacement from documentation
-   ```
-
-   **B. Package Migration (javax → jakarta):**
-   ```java
-   // Before
-   import javax.servlet.http.HttpServlet;
-
-   // After
-   import jakarta.servlet.http.HttpServlet;
-   ```
-
-   **C. SecurityManager Removal:**
-   ```java
-   // Before
-   SecurityManager sm = System.getSecurityManager();
-
-   // After
-   // Remove SecurityManager usage or use alternative security mechanisms
-   ```
-
-   **D. Thread Method Changes:**
-   ```java
-   // Before
-   Thread.stop();  // Removed in Java 21
-
-   // After
-   // Use interrupt() and proper thread coordination
-   thread.interrupt();
-   ```
-
-   **E. Third-party Library Updates:**
-
-   > **Multi-Module Project Note:** Dependencies may be in root or submodule build files, or in version catalog files. Refer to "Gradle Project Structure Patterns" to locate the correct file.
-
-   - Check if a newer version of the library supports Java 25
-   - Update the dependency version in your dependency configuration file:
-     - [build.gradle](build.gradle) or [build.gradle.kts](build.gradle.kts) for traditional dependency declarations (check root and submodule directories)
-     - [gradle/libs.versions.toml](gradle/libs.versions.toml) if using Gradle version catalogs
-
-     Example for build.gradle:
-     ```groovy
-     dependencies {
-       implementation 'group:artifact:new-version'  // Updated version
-     }
-     ```
-
-     Example for gradle/libs.versions.toml:
-     ```toml
-     [versions]
-     library = "new-version"
-
-     [libraries]
-     library-name = { group = "group", name = "artifact", version.ref = "library" }
-     ```
-
-2. **Make targeted, minimal changes:**
+1. **Make targeted, minimal changes:**
    - Only modify the code necessary to fix the error
    - Avoid refactoring or restructuring beyond what's needed
    - Preserve existing functionality and behavior
 
-3. **Test the fix:**
+2. **Test the fix:**
    - Re-run the build after each fix
    - Verify the specific error is resolved
    - Ensure no new errors are introduced
