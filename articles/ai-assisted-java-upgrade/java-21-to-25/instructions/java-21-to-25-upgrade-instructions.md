@@ -1393,7 +1393,101 @@ mapstruct = "1.5.3.Final"
 mapstruct = "<LATEST_VERSION>"
 ```
 
-#### 6a.3 Replace google-java-format Plugin with Spotless (If Present)
+#### 6a.3 Check and Upgrade Spotless Gradle Plugin to Latest Version (If Present)
+
+The `spotless` Gradle plugin has to be upgraded to the latest version for Java 21 compatibility.
+
+**🔴 CRITICAL - REQUIRED LOGGING FOR STEP 6a.3:**
+Update the "Step 6a.3: Library Upgrades" section in the log file with:
+- If spotless plugin is not found: Log "Spotless plugin not present - skipped"
+- If spotless plugin is found and upgraded: Log "Spotless plugin upgraded to version [new_version]"
+
+**Check if Spotless plugin is present:**
+
+```bash
+# Search for spotless in build files
+grep -r "spotless\|com.diffplug.spotless" --include="build.gradle*" .
+
+# Check settings.gradle for plugin management
+grep -i "spotless" settings.gradle settings.gradle.kts 2>/dev/null
+```
+
+**If Spotless is found, check the version:**
+
+```bash
+# Extract Spotless version from build.gradle (plugin declaration)
+grep -E "spotless.*version.*[0-9]+\.[0-9]+\.[0-9]+" build.gradle build.gradle.kts 2>/dev/null
+
+# Or from settings.gradle (plugin management)
+grep -E "spotless.*version.*[0-9]+\.[0-9]+\.[0-9]+" settings.gradle settings.gradle.kts 2>/dev/null
+
+# Or from version catalog
+grep -A1 "spotless" gradle/libs.versions.toml 2>/dev/null
+```
+
+**If Spotless is found, get the latest version and upgrade (minimum 8.2.0 required)**
+
+##### Action A: Get the latest Spotless plugin version
+
+Find the latest Spotless plugin version from the Gradle Plugin Portal: https://plugins.gradle.org/plugin/com.diffplug.spotless
+
+**Note:** The Gradle Plugin Portal is the authoritative source for Gradle plugin versions. Maven Central may show older versions as Gradle plugins are published separately to the plugin portal.
+
+Use the latest version from the Gradle Plugin Portal. If unable to check, use version 8.2.0 or higher as a fallback.
+
+##### Action B: Update the plugin version
+
+For `build.gradle` (Groovy DSL):
+```groovy
+plugins {
+    // ... other plugins ...
+    // Before
+    id 'com.diffplug.spotless' version '6.x.x'
+
+    // After - use latest version
+    id 'com.diffplug.spotless' version '<LATEST_VERSION>'
+}
+```
+
+For `build.gradle.kts` (Kotlin DSL):
+```kotlin
+plugins {
+    // ... other plugins ...
+    // Before
+    id("com.diffplug.spotless") version "6.x.x"
+
+    // After - use latest version
+    id("com.diffplug.spotless") version "<LATEST_VERSION>"
+}
+```
+
+For `gradle/libs.versions.toml` (Version Catalog):
+```toml
+[versions]
+# Before
+spotless = "6.x.x"
+
+# After - use latest version
+spotless = "<LATEST_VERSION>"
+
+[plugins]
+spotless = { id = "com.diffplug.spotless", version.ref = "spotless" }
+```
+
+For `settings.gradle` or `settings.gradle.kts` (Plugin Management):
+```groovy
+pluginManagement {
+    plugins {
+        // Before
+        id 'com.diffplug.spotless' version '6.x.x'
+
+        // After - use latest version
+        id 'com.diffplug.spotless' version '<LATEST_VERSION>'
+    }
+}
+```
+
+#### 6a.4 Replace google-java-format Plugin with Spotless (If Present)
 <!-- Google Java Format plugin may not be used in Java 21 projects.
 Leaving this section to take care of any legacy projects, which have not removed the plugin.
  -->
