@@ -1116,7 +1116,7 @@ Update the "Step 5: Update Project Configuration" section in the log file with:
 Ensure JAVA_HOME points to the correct Java 21 installation:
 
 ```bash
-export JAVA_HOME=$(sdk home java 21.0.9-amzn)
+export JAVA_HOME="$SDKMAN_DIR/candidates/java/$(sdk list java | grep "21\..*amzn" | head -1 | awk '{print $NF}')"
 echo $JAVA_HOME
 ```
 
