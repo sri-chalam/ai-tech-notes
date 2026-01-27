@@ -486,6 +486,10 @@ For this upgrade, the instructions were modified to explicitly handle (only if a
 
 Organizations using TLS interception (SSL forward proxy) must ensure certificates are available before executing the upgrade. In one test environment, the AI coding agent was unable to download the Gradle wrapper because the organization's TLS interception certificates had not been imported after installing the new JDK. Copying these certificates to `~/trusted-certs/` prior to running the upgrade resolved the issue.
 
+### Upgrade Spotless Gradle Plugin Version, Not Formatting Styles
+
+During an AI-assisted Java upgrade, Spotless format verification failed due to plugin version incompatibility. Rather than upgrading the Spotless version, the AI agent resolved the issue by changing the formatting style configuration—which reformatted many files unnecessarily. Explicit instructions were added to upgrade the Spotless plugin version, rather than altering the formatting style. This prevents unintended widespread code changes.
+
 ### Additional Lessons
 
 **Some Steps May Be Skipped Silently**
@@ -542,6 +546,21 @@ One area for future improvement: the instructions currently hardcode version num
 Consider reviewing the instruction files to understand what they're doing—**relying solely on AI without understanding the underlying steps may gradually erode debugging and troubleshooting skills**.
 
 An instruction file is also available for Java 21 to 25 upgrades. Feedback on what works, what doesn't, and how these instructions have been adapted for different use cases is welcome and appreciated.
+
+## Example Repositories
+
+The instructions discussed in this article were tested on a couple of popular Java Spring Boot projects. The Github Copilot and Claude Code were used to test the upgrade.
+
+### Example Repository of Java 17 to 21 Upgrade
+[Java 17 to 21 Upgrade Example - Spring PetClinic](https://github.com/sri-chalam/spring-petclinic-ai-java-upgrade?tab=readme-ov-file#how-to-upgrade-this-project-using-ai-instructions) 
+
+The `main` branch contains the source code before the upgrade. The branch `java-21-upgrade` has code after the upgrade.
+
+### Example Repository of Java 21 to 25 Upgrade
+
+[Java 21 to 25 Upgrade Example - Realworld Java21 Spring Boot3](https://github.com/sri-chalam/realworld-java21-ai-assisted-upgrade?tab=readme-ov-file#how-to-upgrade-this-project-using-ai-instructions)
+
+The `main` branch contains the source code before the upgrade. The branch `java-25-upgrade` has code after the upgrade.
 
 ## References
 
