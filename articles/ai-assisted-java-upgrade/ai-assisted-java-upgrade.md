@@ -7,11 +7,11 @@ AI coding agents have become remarkably powerful tools, capable of implementing 
 
 To effectively leverage AI coding agents, detailed instructions are needed to communicate these organization-specific conventions and guide the agent toward the desired implementation approach. **Even as AI agents continue to mature and become more sophisticated, the need for clear and unambiguous instructions that follow team and organization-specific conventions will remain essential**.
 
-This article presents an approach to automating Java version upgrades using custom AI instruction files, along with a set of reusable instructions and best practices. **This article explains the approach using a Java 17 to 21 upgrade as the primary example, but instruction files are available for both Java 17 to 21 and Java 21 to 25 upgrades**.
+This article presents an approach to automating Java version upgrades using custom AI instruction files, along with a set of reusable instructions and best practices. **This article explains the approach using a Java 17 to 21 upgrade as the primary example, but AI instruction files are available for both Java 17 to 21 and Java 21 to 25 upgrades**.
 
 What might seem like a straightforward task—such as upgrading a Java version—often involves numerous organization-specific decisions that AI agents need guidance to navigate effectively.
 
-The approach demonstrated here provides key advantages: LLM-agnostic flexibility, cost control, transparency, and customization for organizational conventions.
+**The Approach:** While AI agents like GitHub Copilot App Modernization and Amazon Q Developer can perform Java upgrades, they don't know your organization's conventions out of the box. This article presents a hybrid approach that combines: (1) custom AI instruction files that encode organization-specific requirements, (2) OpenRewrite—a popular, community-driven tool that performs deterministic code transformations using predefined recipes, and (3) AI-assisted problem-solving for issues that OpenRewrite can't handle automatically. This approach is LLM-agnostic (works with Claude, ChatGPT, Gemini, or any AI coding agent) and requires no additional subscriptions beyond your chosen LLM.
 
 **Recommended Editor:** Visual Studio Code. This guide was tested using VS Code with GitHub Copilot and Claude Code plugins.
 
@@ -490,6 +490,18 @@ Organizations using TLS interception (SSL forward proxy) must ensure certificate
 
 During an AI-assisted Java upgrade, Spotless format verification failed due to plugin version incompatibility. Rather than upgrading the Spotless version, the AI agent resolved the issue by changing the formatting style configuration—which reformatted many files unnecessarily. Explicit instructions were added to upgrade the Spotless plugin version, rather than altering the formatting style. This prevents unintended widespread code changes.
 
+### Monitor the Upgrade Process Actively
+
+When the AI coding assistant is executing the upgrade, keep watching the logs in the chat window. Some AI coding agents, such as GitHub Copilot, also execute shell scripts and commands in a separate terminal window—monitor both the chat window and the terminal to track progress. Other agents, such as Anthropic Claude Code, execute commands within the chat window itself. These logs indicate whether the upgrade is proceeding correctly and help catch issues early.
+
+If the logs in the chat window or terminal indicate that the upgrade is going in a completely wrong direction, or if the AI appears stuck, stop the execution immediately. Revert all changes and start over rather than allowing the AI to continue down an incorrect path.
+
+### Know When to Stop and Restart
+
+In some cases, the AI coding assistant may encounter a state where it cannot proceed correctly. In one instance, the AI reported that the terminal was in a "bad state" and could not execute commands. Rather than waiting for the terminal issue to be resolved, the AI set aside the instruction file and attempted to perform the upgrade using its own knowledge—without executing the prescribed commands. This resulted in an upgrade that bypassed the carefully crafted instructions.
+
+When the AI deviates significantly from the instruction file or encounters persistent execution issues, it's better to stop the session, fix the underlying problem (such as terminal state or environment issues), and restart the upgrade from the beginning.
+
 ### Additional Lessons
 
 **Some Steps May Be Skipped Silently**
@@ -528,6 +540,22 @@ Different LLMs produced different suggestions when creating these instructions. 
 
 When asked to generate an instruction for adding an OpenRewrite dependency with the latest release version, the LLM produced invalid syntax. Always review generated instructions and code carefully before incorporating them into instruction files.
 
+**Respond to Terminal Prompts During Execution**
+
+Some commands executed by the AI may prompt for user input in the terminal—for example, "Do you want to make this Java the default? (y/n)". If these prompts are not answered, the upgrade will stall. Keep an eye on the terminal for any interactive prompts that require a response.
+
+**Click "Keep" and "Allow" Buttons Promptly**
+
+As the AI assistant executes instructions and logs information to the log markdown file, it periodically asks for confirmation to keep changes. Click the "Keep" button when prompted. Similarly, the AI chat may wait for permission before making certain changes—click "Allow" to let it proceed. If you don't respond, the upgrade will pause indefinitely.
+
+**Scroll the Chat Window to Check for Waiting Prompts**
+
+In GitHub Copilot, the AI chat window sometimes does not auto-scroll to show new messages. If the upgrade appears stalled, manually scroll down in the chat window. You may find that the AI assistant is waiting for input or confirmation that wasn't visible. Anthropic Claude Code does not have this issue—its chat window auto-scrolls correctly.
+
+**Timestamp Logging May Not Be Followed Correctly**
+
+The instruction to log timestamps for each step is not always followed correctly in Github Copilot. In some cases, multiple steps—or all steps—may show the same timestamp in the log file. Be aware of this limitation when reviewing logs for timing information.
+
 ## Where to Go From Here
 
 The key takeaway from this work is that **instruction files created with AI assistance can deliver substantial value with relatively modest effort**—but they're not magic bullets.
@@ -561,6 +589,9 @@ The `main` branch contains the source code before the upgrade. The branch `java-
 [Java 21 to 25 Upgrade Example - Realworld Java21 Spring Boot3](https://github.com/sri-chalam/realworld-java21-ai-assisted-upgrade?tab=readme-ov-file#how-to-upgrade-this-project-using-ai-instructions)
 
 The `main` branch contains the source code before the upgrade. The branch `java-25-upgrade` has code after the upgrade.
+
+You can view the detailed AI-assisted upgrade log showing all the changes made during the upgrade process:
+[Java 21 to 25 Sample Upgrade Log](https://github.com/sri-chalam/realworld-java21-ai-assisted-upgrade/blob/java-25-upgrade/docs/ai-tasks/logs/java-21-to-25-upgrade-log.md)
 
 ## References
 
