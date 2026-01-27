@@ -937,7 +937,7 @@ echo ""
 #### 4.2 Find and Install Latest Amazon Corretto Java 25 (if not present)
 
 **🔴 CRITICAL - REQUIRED LOGGING FOR STEP 4.2:**
-Update the "Step 4.2: Install Amazon Corretto Java 21" section in the log file with:
+Update the "Step 4.2: Find and Install Amazon Corretto Java 25" section in the log file with:
 - Whether Java 25 was already installed or newly installed
 - The specific Java version installed (e.g., `25.0.1-amzn`)
 - Installation path (JAVA_HOME location)
@@ -1116,7 +1116,7 @@ Update the "Step 5: Update Project Configuration" section in the log file with:
 Ensure JAVA_HOME points to the correct Java 25 installation:
 
 ```bash
-export JAVA_HOME=$(sdk home java 25.0.1-amzn)
+export JAVA_HOME="$SDKMAN_DIR/candidates/java/$(sdk list java | grep "25\..*amzn" | head -1 | awk '{print $NF}')"
 echo $JAVA_HOME
 ```
 
