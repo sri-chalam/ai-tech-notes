@@ -42,7 +42,7 @@ An AI agent is a more complex system that can:
 
 This article uses instruction files to guide AI coding agents through the hybrid upgrade approach described below.
 
-## Why Are Java Upgrades Not Simple?
+## Why Automating Java Upgrades Is Complex?
 
 At first glance, upgrading a Java project from version 17 to 21 might seem straightforward. One could simply prompt an LLM: "upgrade this project from Java 17 to Java 21" and expect it to handle everything. While such a prompt might accomplish a few basic changes, the reality is far more nuanced.
 
