@@ -8,9 +8,11 @@ To effectively leverage AI coding agents, detailed instructions are needed to co
 
 What might seem like a straightforward task—such as upgrading a Java version—often involves numerous organization-specific decisions that AI agents need guidance to navigate effectively.
 
-This article demonstrates this guidance approach in practice, presenting a method for automating Java version upgrades using custom AI instruction files. **While the Java 17 to 21 upgrade serves as the primary example, this article provides AI instruction files for both Java 17 to 21 and Java 21 to 25 upgrades**. Beyond the specific examples, this article also covers the theoretical foundation of this approach, which readers can adapt to their own automation use cases.
+This article demonstrates this guidance approach in practice, presenting a method for automating Java version upgrades using custom AI instruction files. **Importantly, these instructions automate the complete workflow end-to-end—from environment setup (package manager installation, Java installation, certificate imports) through code migration—not just the code changes themselves**. 
 
-**The Approach:** While AI agents like GitHub Copilot App Modernization and Amazon Q Developer can perform Java upgrades, they lack awareness of organization-specific conventions out of the box. The hybrid approach presented here uses **custom AI instruction files** that combine:
+While this article uses the Java 17 to 21 upgrade as the primary example, instruction files for both Java 17 to 21 and Java 21 to 25 upgrades are included. Beyond the specific examples, this article also covers the theoretical foundation of this approach, which readers can adapt to their own automation use cases.
+
+**The Approach:** AI agents like GitHub Copilot App Modernization and Amazon Q Developer can perform Java upgrades, they lack awareness of organization-specific conventions out of the box. The hybrid approach presented here uses **custom AI instruction files** that combine:
 
 1. **Organization-specific requirements**—encoding team conventions such as Java distribution, installation method, and trusted certificate import
 2. **OpenRewrite**—a popular and actively maintained, community-driven tool that upgrades dependencies, fixes deprecated APIs, and modernizes code with safe new Java language features through predefined recipes
