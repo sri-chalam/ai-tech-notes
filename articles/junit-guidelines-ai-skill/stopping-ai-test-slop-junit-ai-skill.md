@@ -8,6 +8,8 @@ This has come to be called "test slop": code that compiles, passes, and adds alm
 
 Those rules were written down and turned into an AI skill: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
 
+**Using this skill, the unit tests generated are as if an experienced developer wrote them — in a fraction of the time.**
+
 ## Why AI-generated tests need explicit guidance
 
 Writing unit tests is easy for an AI coding agent — too easy. **Without clear guidance, large volumes of tests get generated that mock everything and verify nothing meaningful.**
@@ -98,7 +100,7 @@ Full details, including the complete rule list and ready-to-use prompts, are in 
 
 ## Reference
 
-This skill was reviewed against [Writing Great Skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills), which argues a SKILL.md should stay small and free of redundant ("noop") instructions.
+This skill was reviewed against [Writing Great Skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills), which argues a SKILL.md should stay small and free of redundant ("noop") instructions — that its description should front-load the skill's leading word so the description does its invocation work first, and treat each real use case as one branch, giving each branch exactly one trigger.
 
 ## Closing thought
 
