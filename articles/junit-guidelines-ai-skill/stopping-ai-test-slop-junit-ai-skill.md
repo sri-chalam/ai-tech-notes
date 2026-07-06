@@ -6,7 +6,7 @@ Ask an AI agent to "add some tests" for a Java class, and a wall of them is happ
 
 This has come to be called "test slop": code that compiles, passes, and adds almost no real verification value. It's a quiet problem, because it doesn't look like a problem. The build is green. Coverage numbers go up. It's only later, during a refactor, that it becomes clear which tests were real and which ones were just noise — and by then, time has already been spent chasing false alarms or, worse, a real regression has been missed because a test wasn't actually checking anything.
 
-Those rules were written down and turned into an AI skill: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
+This is what the skill exists to fix — unit-testing best practices, put together as a set of rules an AI skill can follow: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
 
 **Using this skill, the unit tests generated are built on best practices, with the quality of an experienced developer's work — in a fraction of the time:**
 
@@ -118,14 +118,6 @@ A smaller rule worth calling out: any identifier, code, or string reused across 
 
 In total, the skill covers 13 rules, from general test guidelines down to descriptive failure messages, each with a rationale rather than just a directive.
 
-## Project-specific conventions
-
-This skill is generic and has no knowledge of a specific project's conventions — for example, whether `customerId` is a `UUID` or a `String`. Such details should live in a project-level `test-instructions.md` (or similar file dedicated to test conventions), not in this skill or in a catch-all CLAUDE.md/AGENTS.md, so the skill stays portable and project conventions stay easy to find as they grow.
-
-## Known limitations
-
-The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
-
 ## A second pair of eyes: the validator subagent
 
 The most useful part isn't the rules themselves — it's the last step. Once tests are generated, the skill hands them off to a separate subagent, [`junit-validator`](https://github.com/sri-chalam/ai-tools/blob/main/agents/engineering/junit-guidelines/junit-validator.md), which reviews them in a completely fresh context.
@@ -151,6 +143,14 @@ ln -s /path/to/ai-tools/agents/engineering/junit-guidelines/junit-validator.md ~
 After that, the AI coding agent is restarted, and the skill is picked up automatically whenever something matching `src/test/**/*.java`, `**/*Test.java`, or `**/*Tests.java` is touched. It can also be invoked explicitly with `/junit-guidelines`, which is worth doing when it needs to be certain the skill is loaded rather than left to be inferred from context.
 
 Full details, including the complete rule list and ready-to-use prompts, are in the [README](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/README.md).
+
+## Project-specific conventions
+
+This skill is generic and has no knowledge of a specific project's conventions — for example, whether `customerId` is a `UUID` or a `String`. Such details should live in a project-level `test-instructions.md` (or similar file dedicated to test conventions), not in this skill or in a catch-all CLAUDE.md/AGENTS.md, so the skill stays portable and project conventions stay easy to find as they grow.
+
+## Known limitations
+
+The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
 
 ## Reference
 
