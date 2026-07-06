@@ -1,6 +1,6 @@
 # Stopping AI Test Slop: A JUnit Best-Practices AI Skill
 
-AI coding agents have been used to write unit tests for a while now, and something has become noticeable that's worth bothering over: the agent is *very* good at writing tests, and that's part of the problem.
+AI coding agents write unit tests fast, confidently, and in bulk. None of that guarantees the tests are any good.
 
 Ask an AI agent to "add some tests" for a Java class, and a wall of them is happily produced — dozens of `@Test` methods, all green, all compiling. It feels productive. But when they're actually read through, a lot of that code isn't testing anything meaningful.
 
@@ -8,7 +8,10 @@ This has come to be called "test slop": code that compiles, passes, and adds alm
 
 Those rules were written down and turned into an AI skill: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
 
-**Using this skill, the unit tests generated are as if an experienced developer wrote them — in a fraction of the time.**
+**Using this skill, the unit tests generated are built on best practices, with the quality of an experienced developer's work — in a fraction of the time:**
+
+- Applies whether tests are written from scratch, reviewed for quality, or checked for missing coverage
+- A fresh-context subagent reviews the generated tests as an independent pair of eyes, and the skill then fixes any issues it flags and resolves compile errors — so the output isn't just fast, it's already validated
 
 ## Why AI-generated tests need explicit guidance
 
@@ -22,6 +25,41 @@ This tends to go wrong in two opposite directions at once:
 Both erode trust in the test suite, just from different sides — one through false confidence, the other through false alarms. A suite that can't be trusted is arguably worse than no suite at all. When the application is later refactored, a wall of low-value tests breaks alongside (or instead of) any real regressions, and it can no longer be told whether a failing test means "something broke" or "this test was brittle."
 
 The goal of this skill is simple: keep AI-generated tests few, meaningful, and genuinely useful during refactoring, rather than something to wade through.
+
+### Example: A "Slop" Test
+
+```java
+@ExtendWith(MockitoExtension.class)
+public class OrderServieTest {
+  @Mock private OrderClient orderClient;
+  @Mock private CustomerService customerService;
+  @Mock private SQSUtil sqsUtil;
+
+  // Except the orderservice, every depedency of this service is mocked.
+  private OrderService orderService;
+
+  @BeforeEach
+  void setup() {
+    orderService = new OrderService(orderClient, customerService, sqsUtil);
+  }
+
+  @Test
+  public void getOrdersOfCustomer_withValidRequest_returnsOrdersOfCustomers() {
+    // Given
+    when(orderClient.getOrders(any())).thenReturn(List.of(mock(Order.class), mock(Order.class)));
+
+    // When
+    List<Order> orderList = orderService.getOrdersOfCustomre(customerId);
+
+    // Then
+    assertThat(orderList)
+      .as("getOrdersOfCustomer should return exactly the orders belonging to customerId=%s", customerId)
+      .hasSize(2); // verifies the mock's arity, not real behavior
+  }
+}
+```
+
+This test passes no matter what `getOrders` actually does with `customerId` — `any()` accepts any argument, and `hasSize(2)` just confirms the mock returned two mock objects. Nothing here verifies real behavior.
 
 ## Common Use Cases
 
@@ -79,6 +117,8 @@ In total, the skill covers 13 rules, from general test guidelines down to descri
 The most useful part isn't the rules themselves — it's the last step. Once tests are generated, the skill hands them off to a separate subagent, [`junit-validator`](https://github.com/sri-chalam/ai-tools/blob/main/agents/engineering/junit-guidelines/junit-validator.md), which reviews them in a completely fresh context.
 
 That "fresh context" part matters. The same context that wrote the tests isn't well positioned to notice its own mistakes — its own naming and coverage decisions are already assumed to be correct. The validator has no memory of how the tests were written. The tests are read, the class under test is read, the guidelines are read, and a findings table is reported back: naming problems, cases where a test's name doesn't match what its body actually asserts, and missing coverage for real branches or error paths. It's read-only — no code is ever edited by it; only what needs fixing is reported.
+
+The skill takes that report back, fixes whatever the validator flagged, and resolves any compile errors the changes introduce — so the fresh pair of eyes isn't just advisory, it's acted on before the work is considered done.
 
 ## AI Agent Compatibility
 
