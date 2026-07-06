@@ -112,6 +112,10 @@ A smaller rule worth calling out: any identifier, code, or string reused across 
 
 In total, the skill covers 13 rules, from general test guidelines down to descriptive failure messages, each with a rationale rather than just a directive.
 
+## Project-Specific Conventions
+
+This skill is generic and has no knowledge of a specific project's conventions — for example, whether `customerId` is a `UUID` or a `String`. Such details should live in a project-level `test-instructions.md` (or similar file dedicated to test conventions), not in this skill or in a catch-all CLAUDE.md/AGENTS.md, so the skill stays portable and project conventions stay easy to find as they grow.
+
 ## A second pair of eyes: the validator subagent
 
 The most useful part isn't the rules themselves — it's the last step. Once tests are generated, the skill hands them off to a separate subagent, [`junit-validator`](https://github.com/sri-chalam/ai-tools/blob/main/agents/engineering/junit-guidelines/junit-validator.md), which reviews them in a completely fresh context.
