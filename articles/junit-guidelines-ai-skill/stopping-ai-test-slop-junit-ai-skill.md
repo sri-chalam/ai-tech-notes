@@ -126,7 +126,7 @@ This skill's guidelines are written for any AI coding agent — Claude Code, Cod
 
 ## Getting set up
 
-The setup is a couple of symbolic links rather than a copy-paste, which is deliberate — the skill and its guidelines change over time, and a `git pull` in the cloned repo is enough to pick up updates everywhere they're linked:
+A naive setup — copying the skill files into `~/.claude/skills` and `~/.claude/agents` — creates a recurring chore: every time the guidelines are tweaked (and they change often, as edge cases surface and rules get refined), the copies would need to be redone by hand. Symbolic links avoid that: clone the repo once, link into place, and from then on a `git pull` plus restarting the AI coding agent is all it takes to pick up updates everywhere they're linked.
 
 ```bash
 git clone https://github.com/sri-chalam/ai-tools.git
@@ -146,4 +146,7 @@ This skill was reviewed against [Writing Great Skills](https://github.com/mattpo
 
 None of this is groundbreaking — it's mostly unit-testing advice that's existed for years, just written down explicitly enough that an AI agent can actually follow it. AI-generated tests aren't necessarily worse than human-written ones. They're worse *by default*, because nothing stops the agent from taking the path of least resistance: mock everything, assert something, move on. Writing the guidance down, and adding a second pass that checks the work with fresh eyes, has made the resulting tests noticeably more trustworthy — and that's really all this was aimed at.
 
-If rules are found that don't hold up in a given codebase, or gaps are spotted, feedback is genuinely welcome. This is a living document, not a finished one.
+This is a living document, not a finished one, and using it well means staying involved rather than trusting it blindly:
+
+- **Verify the generated tests.** The AI isn't perfect — always check the output for anything that looks off before trusting it.
+- **When something incorrect slips through, ask why.** Prompt the model: why didn't the AI skill catch this, and what change to the SKILL.md would prevent it from recurring? Feed that suggestion back into the guidelines so the same mistake doesn't repeat.
