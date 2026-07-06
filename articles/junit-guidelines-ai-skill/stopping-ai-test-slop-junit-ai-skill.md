@@ -95,6 +95,12 @@ This isn't a "run it once and forget it" tool. A few situations where it earns i
   /junit-guidelines Using the JUnit guidelines, review this PR's diff (`gh pr diff 123`). For each new or changed logic-owning method, check whether the PR's tests actually exercise that logic (conditional logic paths, edge cases, exceptions) — not just whether a test method exists. Report any business logic added or changed without corresponding test coverage. Do not write any test code yet — just the report.
   ```
 
+- **Finding test classes that should use fakes instead of mocks** (report only, no code changes)
+
+  ```bash
+  /junit-guidelines Using the JUnit guidelines, explore the codebase's test classes and identify those mocking stateful, complex external dependencies where an interface-based fake would be more appropriate. Report the top 10 test classes ranked by expected maintainability benefit, with a one-line reason for each (e.g. dependency has multi-step stateful behavior, mock setup is duplicated across many tests). Do not write any code yet — just the report.
+  ```
+
 ## What the skill actually does
 
 `junit-guidelines` is an AI skill — think of it as a set of instructions an AI coding agent (Claude Code, in this case) loads automatically whenever it's about to write, review, or modify a JUnit 5 test file. The agent isn't asked to invent its own testing philosophy; one is handed to it, with concrete rules and both good and bad examples for each.
