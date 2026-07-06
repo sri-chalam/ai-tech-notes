@@ -22,7 +22,7 @@ This tends to go wrong in two opposite directions at once:
 - **Over-mocked tests** silently fail to catch real regressions, because everything the test touches has been faked out.
 - **Implementation-detail tests** are tightly coupled to private internals, so they break noisily on every refactor even when observable behavior hasn't changed.
 
-Both erode trust in the test suite, just from different sides — one through false confidence, the other through false alarms. A suite that can't be trusted is arguably worse than no suite at all. When the application is later refactored, a wall of low-value tests breaks alongside (or instead of) any real regressions, and it can no longer be told whether a failing test means "something broke" or "this test was brittle."
+Both erode trust in the test suite, just from different sides — one through false confidence, the other through false alarms. A suite that can't be trusted is arguably worse than no suite at all. When the application is later refactored, a wall of low-value tests breaks alongside (or instead of) any real regressions, and a failing test can no longer be told apart from a brittle one.
 
 The goal of this skill is simple: keep AI-generated tests few, meaningful, and genuinely useful during refactoring, rather than something to wade through.
 
@@ -61,7 +61,7 @@ public class OrderServieTest {
 
 This test passes no matter what `getOrders` actually does with `customerId` — `any()` accepts any argument, and `hasSize(2)` just confirms the mock returned two mock objects. Nothing here verifies real behavior.
 
-## Common Use Cases
+## Common use cases
 
 This isn't a "run it once and forget it" tool. A few situations where it earns its keep, in day-to-day use — each with a sample Claude Code prompt that can be copied and adapted (swap the `/junit-guidelines` and `@file` syntax for plain English on other agents):
 
@@ -118,11 +118,11 @@ A smaller rule worth calling out: any identifier, code, or string reused across 
 
 In total, the skill covers 13 rules, from general test guidelines down to descriptive failure messages, each with a rationale rather than just a directive.
 
-## Project-Specific Conventions
+## Project-specific conventions
 
 This skill is generic and has no knowledge of a specific project's conventions — for example, whether `customerId` is a `UUID` or a `String`. Such details should live in a project-level `test-instructions.md` (or similar file dedicated to test conventions), not in this skill or in a catch-all CLAUDE.md/AGENTS.md, so the skill stays portable and project conventions stay easy to find as they grow.
 
-## Known Limitations
+## Known limitations
 
 The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
 
@@ -134,7 +134,7 @@ That "fresh context" part matters. The same context that wrote the tests isn't w
 
 The skill takes that report back, fixes whatever the validator flagged, and resolves any compile errors the changes introduce — so the fresh pair of eyes isn't just advisory, it's acted on before the work is considered done.
 
-## AI Agent Compatibility
+## AI agent compatibility
 
 This skill's guidelines are written for any AI coding agent — Claude Code, Codex, Copilot, and others. However, the final validation step relies on a subagent — a fresh-context reviewer that checks generated tests against the guidelines, fixes discrepancies, and resolves compile issues. A subagent is used so validation happens with a fresh pair of eyes rather than the same context that wrote the tests, but the subagent invocation mechanism itself is Claude Code-specific, and its instructions may not work in other AI coding agents. There does not appear to be a portable, cross-agent way to invoke subagents at this time. On other agents, test generation still follows the guidelines directly; only the separate validation pass is unavailable.
 
@@ -162,5 +162,5 @@ None of this is groundbreaking — it's mostly unit-testing advice that's existe
 
 This is a living document, not a finished one, and using it well means staying involved rather than trusting it blindly:
 
-- **Verify the generated tests.** The AI isn't perfect — always check the output for anything that looks off before trusting it.
-- **When something incorrect slips through, ask why.** Prompt the model: why didn't the AI skill catch this, and what change to the SKILL.md would prevent it from recurring? Feed that suggestion back into the guidelines so the same mistake doesn't repeat.
+- **Generated tests should be checked, not trusted blindly** — anything that looks off deserves a second look before being accepted.
+- **When something incorrect slips through, it's worth asking why.** Why didn't the skill catch it, and what change to SKILL.md would prevent a repeat? That suggestion can then be fed back into the guidelines so the same mistake doesn't recur.
