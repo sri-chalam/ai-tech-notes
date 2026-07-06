@@ -4,9 +4,9 @@ AI coding agents write unit tests fast, confidently, and in bulk. None of that g
 
 Ask an AI agent to "add some tests" for a Java class, and a wall of them is happily produced — dozens of `@Test` methods, all green, all compiling. It feels productive. But when they're actually read through, a lot of that code isn't testing anything meaningful.
 
-This has come to be called "test slop": code that compiles, passes, and adds almost no real verification value. It's a quiet problem, because it doesn't look like a problem. The build is green. Coverage numbers go up. It's only later, during a refactor, that it becomes clear which tests were real and which ones were just noise — and by then, time has already been spent chasing false alarms or, worse, a real regression has been missed because a test wasn't actually checking anything.
+This has come to be called "test slop": test code that compiles, passes, and adds almost no real verification value. It's a quiet problem, because it doesn't look like a problem. The build is green. Coverage numbers go up. It's only later, during a refactor, that it becomes clear which tests were real and which ones were just noise — and by then, time has already been spent chasing false alarms or, worse, a real regression has been missed because a test wasn't actually checking anything.
 
-This is what the skill exists to fix — unit-testing best practices, put together as a set of rules an AI skill can follow: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
+This is what the AI skill exists to fix — unit-testing best practices, put together as a set of rules a skill can follow: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
 
 **Using this skill, the unit tests generated are built on best practices, with the quality of an experienced developer's work — in a fraction of the time:**
 
@@ -150,7 +150,8 @@ This skill is generic and has no knowledge of a specific project's conventions �
 
 ## Known limitations
 
-The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
+- The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
+- The validator step is Claude Code-only for now — no portable way to invoke a fresh-context subagent on other agents exists yet.
 
 ## Reference
 
