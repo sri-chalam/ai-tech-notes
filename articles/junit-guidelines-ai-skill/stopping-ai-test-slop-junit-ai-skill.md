@@ -126,6 +126,12 @@ This isn't a "run it once and forget it" tool. A few situations where it earns i
   /junit-guidelines Using the JUnit guidelines, explore the codebase's test classes and identify those mocking stateful, complex external dependencies where an interface-based fake would be more appropriate. Report the top 10 test classes ranked by expected maintainability benefit, with a one-line reason for each (e.g. dependency has multi-step stateful behavior, mock setup is duplicated across many tests). Do not write any code yet — just the report.
   ```
 
+- **Auditing an existing test class for rule violations and fixing them**
+
+  ```bash
+  /junit-guidelines Using the JUnit guidelines, review @/path/to/OrderServiceTest.java against every rule in the skill. Identify test methods that violate any rule (naming, logic-in-tests, mocking external deps vs. fakes, delegation testing, etc.), then rewrite each violating method to comply — do not just report violations.
+  ```
+
 ## AI agent compatibility
 
 This skill's guidelines are written for any AI coding agent — Claude Code, Codex, Copilot, and others. However, the final validation step relies on a subagent — a fresh-context reviewer that checks generated tests against the guidelines, fixes discrepancies, and resolves compile issues. A subagent is used so validation happens with a fresh pair of eyes rather than the same context that wrote the tests, but the subagent invocation mechanism itself is Claude Code-specific, and its instructions may not work in other AI coding agents. There does not appear to be a portable, cross-agent way to invoke subagents at this time. On other agents, test generation still follows the guidelines directly; only the separate validation pass is unavailable.
@@ -153,9 +159,10 @@ This skill is generic and has no knowledge of a specific project's conventions �
 - The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
 - The validator step is Claude Code-only for now — no portable way to invoke a fresh-context subagent on other agents exists yet.
 
-## Reference
+## References
 
-This skill was reviewed against [Writing Great Skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills), which argues a good skill stays small, avoids redundant instructions, and gives each real use case a single, unambiguous trigger.
+- Some of the testing best practices baked into the guidelines are inspired by [Software Engineering at Google](https://abseil.io/resources/swe-book), particularly its chapters on unit testing and test doubles.
+- This skill was reviewed against [Writing Great Skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills), which argues a good skill stays small, avoids redundant instructions, and gives each real use case a single, unambiguous trigger.
 
 ## Closing thought
 
