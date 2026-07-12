@@ -231,6 +231,9 @@ This skill is generic and has no knowledge of a specific project's conventions �
 
 ## References
 
+- [SKILL.md](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md) — the skill's full rule definitions, with good and bad examples for each rule.
+- [README](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/README.md) — setup details and ready-to-use prompts.
+- [junit-validator](https://github.com/sri-chalam/ai-tools/blob/main/agents/engineering/junit-guidelines/junit-validator.md) — the fresh-context validator subagent.
 - Some of the testing best practices baked into the guidelines are inspired by [Software Engineering at Google](https://abseil.io/resources/swe-book), particularly its chapters on unit testing and test doubles.
 - This skill was reviewed against [Writing Great Skills](https://github.com/mattpocock/skills/tree/main/skills/productivity/writing-great-skills), which argues a good skill stays small, avoids redundant instructions, and gives each real use case a single, unambiguous trigger.
 
