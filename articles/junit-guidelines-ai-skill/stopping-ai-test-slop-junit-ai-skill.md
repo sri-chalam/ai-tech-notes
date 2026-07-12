@@ -8,25 +8,32 @@ This has come to be called "test slop": test code that compiles, passes, and add
 
 This is what the AI skill exists to fix — unit-testing best practices, put together as a set of rules a skill can follow: [**junit-guidelines**](https://github.com/sri-chalam/ai-tools/blob/main/skills/engineering/junit-guidelines/SKILL.md).
 
-**Using this skill, the unit tests generated are built on best practices, with the quality of an experienced developer's work — in a fraction of the time:**
+**Using this skill, the unit tests generated are built on best practices, with the quality of an experienced developer's work — in a fraction of the time. It covers the full range of day-to-day needs:**
 
-- Applies whether tests are written from scratch, reviewed for quality, or checked for missing coverage
+- Planning tests first — behaviors are enumerated and justified before any test code is written
+- Generating tests for uncommitted changes or recent commits
+- Filling gaps in existing tests
+- Reviewing PRs for test coverage
+- Surveying the codebase for a test-coverage report
+- Finding tests that don't follow best practices
 - A fresh-context subagent reviews the generated tests as an independent pair of eyes, and the skill then fixes any issues it flags and resolves compile errors — so the output isn't just fast, it's already validated
+
+Ready-to-use prompts for each of these are in the *Common use cases* section below.
 
 ## Why AI-generated tests need explicit guidance
 
-Writing unit tests is easy for an AI coding agent — too easy. **Without clear guidance, large volumes of tests get generated that mock everything and verify nothing meaningful.**
+Writing unit tests is easy for an AI coding agent — too easy. **Without clear guidance, large volumes of tests get generated — many of them mocking more dependencies than necessary, verifying little of value, and ignoring best practices.**
 
-This tends to go wrong in two opposite directions at once:
+Two of the most common failure modes sit at opposite extremes:
 
-- **Over-mocked tests** silently fail to catch real regressions, because everything the test touches has been faked out.
+- **Over-mocked tests** silently fail to catch real regressions, because multiple dependencies are mocked that hardly any real code is exercised.
 - **Implementation-detail tests** are tightly coupled to private internals, so they break noisily on every refactor even when observable behavior hasn't changed.
 
 Both erode trust in the test suite, just from different sides — one through false confidence, the other through false alarms. A suite that can't be trusted is arguably worse than no suite at all. When the application is later refactored, a wall of low-value tests breaks alongside (or instead of) any real regressions, and a failing test can no longer be told apart from a brittle one.
 
 The goal of this skill is simple: keep AI-generated tests few, meaningful, and genuinely useful during refactoring, rather than something to wade through.
 
-There is a second benefit beyond individual test quality: **consistency at scale**. Training every developer on a team to apply the same naming convention, the same mock-vs-fake judgment, the same test structure — and to keep applying it months later, under deadline pressure, on someone else's code — is hard even with a style guide, because a style guide isn't enforced at the point of writing. A codified skill is applied the same way on every invocation, by every developer's AI agent, without relying on individual memory or discipline.
+There is a second benefit beyond individual test quality: **consistency at scale**. Training every developer on a team to apply the same naming convention, the same mock-vs-fake judgment, the same test structure — and to keep applying it months later, under deadline pressure, on someone else's code — is hard. A codified skill is applied the same way on every invocation, by every developer's AI agent, without relying on individual memory or discipline.
 
 ### Example: a "slop" test
 
@@ -66,7 +73,7 @@ This test passes no matter what `getOrders` actually does with `customerId` — 
 
 ## What the skill actually does
 
-`junit-guidelines` is an AI skill — think of it as a set of instructions an AI coding agent (Claude Code, in this case) loads automatically whenever it's about to plan, write, review, or modify a JUnit 5 test file, or audit production classes that can only be mocked, never faked, because they don't implement any interface. The agent isn't asked to invent its own testing philosophy; one is handed to it, with concrete rules and both good and bad examples for each.
+`junit-guidelines` is an AI skill — think of it as a set of instructions an AI coding agent (Claude Code, in this case) loads automatically whenever it's about to plan, write, review, or modify a JUnit 5 test file, or audit production classes that can only be mocked, never faked, because they don't implement any interface. The agent isn't asked to invent its own testing philosophy; one is handed to it, with concrete rules and both good and bad examples.
 
 A few of the ideas at the core of it:
 
@@ -78,19 +85,19 @@ A few of the ideas at the core of it:
 - **Logic-owning vs. orchestrating methods** — methods with real conditional logic are tested exhaustively; methods that just wire calls together get a representative test, not ten redundant ones.
 - **"A test that cannot catch a real bug should not be written"** — if a method has no branching, no transformation, no error handling, and just forwards its arguments to a dependency, the test is skipped. It would only verify Mockito wiring, not application behavior.
 
-A smaller rule worth calling out: any identifier, code, or string reused across more than one test is expected to become a named `public static final` constant. It sounds minor, but it removes a whole category of "which magic string was this again" confusion later.
-
 In total, the skill covers 14 rules (Rule 0 through Rule 13), from planning down to descriptive failure messages, each with a rationale rather than just a directive.
+
+A smaller rule worth calling out: any identifier, status or error code, or string reused across more than one test is expected to become a named `public static final` constant. It sounds minor, but it removes a whole category of "which magic string was this again" confusion later.
 
 ### No test code before a test plan
 
-Planning before coding is a well-established best practice when working with AI agents, and it applies to tests just as much as to production code. That is why the skill's very first rule requires a test plan before any test code is generated. Without a test plan, generation defaults to a happy-path test per method; which tests deserve to exist is never consciously decided at all.
+Planning before coding is a well-established best practice when working with AI agents, and it applies to tests just as much as to production code. That is why the skill's very first rule requires a test plan before any test code is generated. Without a test plan, generation defaults to a happy-path test per method; which tests are worth creating is never consciously decided at all.
 
 Under this rule:
 
 - Each public method of the class under test is classified first — logic-owning or orchestrating — and only then are tests enumerated: one scenario per branch, boundary, null/empty case, and error path for logic-owning methods; one or two representative wiring scenarios for orchestrating ones.
 - Every planned test must survive the question *"what specific production bug would make this test fail?"* Any test with no plausible answer is dropped at the planning stage — before it exists, not after.
-- The plan is presented as a simple table (test name → behavior) before code generation begins, so scope is decided up front rather than ad hoc mid-generation.
+- The plan is presented as a simple table before code generation begins, so scope is decided up front rather than ad hoc mid-generation.
 
 ## A second pair of eyes: the validator subagent
 
@@ -102,7 +109,7 @@ First, every rule in the guidelines is checked — including the mock-vs-fake ju
 
 - **Missing coverage** — every branch, null check, and catch block of each logic-owning method is mapped to a test; unmapped branches are flagged.
 - **Naming and name-vs-body match** — does the method name follow the convention, and does the body actually verify what the name claims? A test named `throwsIllegalArgumentException` that never asserts a thrown exception gets flagged.
-- **What gets mocked** — mocked value objects or DTOs (which should be constructed for real) and mocked third-party clients like `S3Client` or `RestTemplate` (where the mock belongs on an application-owned interface above the client) are flagged as must-fix.
+- **What gets mocked** — mocked value objects or DTOs (which should be constructed for real) and mocked third-party clients like `S3Client` or `RestTemplate` are flagged as must-fix — instead of mocking the client itself, the class that calls the third-party client should implement an application-owned interface, and the mock goes on that interface.
 - **Assertion strength** — circular tests are caught: a test whose only assertion checks that the result equals the exact value the test itself stubbed proves only that Mockito returns what it was told. Weak assertion-only tests (`hasSize`, `isNotNull`) are flagged too.
 
 Two design choices keep the findings trustworthy. Each finding carries a severity (must-fix, should-fix, or nit), and every must-fix must cite and quote the exact guideline line being enforced — a finding that can't point to a specific rule is downgraded or dropped, so the report stays grounded in the guidelines rather than the validator's opinion. And if the validator can't read the test files or resolve the guidelines, it reports "not run" loudly instead of returning an empty table that would look like a clean pass.
@@ -168,7 +175,7 @@ This isn't a "run it once and forget it" tool. A few situations where it earns i
 - **Helping a reviewer check a PR's test coverage** — before approving, the skill verifies that every new or changed piece of logic in the PR has appropriate unit tests, not just that some test files were touched. (Before running the skill, check out the PR branch with `gh pr checkout 123` so the agent sees complete files, not just the changed lines.)
 
   ```bash
-  /junit-guidelines Using the JUnit guidelines, review this branch's changes (`git diff main...HEAD`) and check whether every new or changed piece of logic has tests that actually exercise it. Report the gaps only; do not write any test code.
+  /junit-guidelines Using the JUnit guidelines, review this PR's changes (PR branch is checked out; `git diff main...HEAD`) and check whether every new or changed piece of logic has tests that actually exercise it. Report the gaps only; do not write any test code.
   ```
 
 - **Finding test classes that should use fakes instead of mocks** (report only, no code changes)
@@ -197,7 +204,7 @@ This isn't a "run it once and forget it" tool. A few situations where it earns i
 
 ## AI agent compatibility
 
-This skill's guidelines are written for any AI coding agent — Claude Code, Codex, Copilot, and others. However, the final validation step relies on a subagent — a fresh-context reviewer that checks generated tests against the guidelines, fixes discrepancies, and resolves compile issues. A subagent is used so validation happens with a fresh pair of eyes rather than the same context that wrote the tests, but the subagent invocation mechanism itself is Claude Code-specific, and its instructions may not work in other AI coding agents. There does not appear to be a portable, cross-agent way to invoke subagents at this time. On other agents, test generation still follows the guidelines directly; only the separate validation pass is unavailable.
+This skill's guidelines are written for any AI coding agent — Claude Code, Codex, Copilot, and others. However, the final validation step relies on a subagent — a fresh-context reviewer that checks generated tests against the guidelines, fixes discrepancies, and resolves compile issues. A subagent is used so validation happens with a fresh pair of eyes rather than the same context that wrote the tests, but the subagent invocation mechanism itself is Claude Code-specific, and its instructions may not work in other AI coding agents. There does not appear to be a portable, cross-agent way to invoke subagents at this time. On other agents, test generation still follows the guidelines, and validation still runs — just in the same context that wrote the tests, rather than with a fresh pair of eyes.
 
 ## Getting set up
 
@@ -219,8 +226,8 @@ This skill is generic and has no knowledge of a specific project's conventions �
 
 ## Known limitations
 
-- The skill states when a mock should be an interface-based fake instead, but doesn't walk through *migrating* an existing test off mocks — introducing the fake, restructuring setup, deciding what state it needs to track — is left to the agent's (and reviewer's) judgment.
-- The validator step is Claude Code-only for now — no portable way to invoke a fresh-context subagent on other agents exists yet.
+- For complex stateful dependencies, fakes are preferred over mocks — but a fake needs an interface to implement. When existing classes don't provide one, the skill deliberately falls back to mocks rather than refactoring production code just to enable a fake. In new code, where the interface can be designed in from the start, fakes are written instead.
+- Fresh-context validation is Claude Code-only for now — no portable way to invoke a subagent on other agents exists yet, so validation there runs in the same context that wrote the tests.
 
 ## References
 
