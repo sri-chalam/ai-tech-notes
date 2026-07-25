@@ -83,7 +83,7 @@ A few of the ideas at the core of it:
 - **Mocks vs. fakes** — the skill is explicit about when a Mockito mock is fine and when a stateful dependency deserves an interface-based fake instead.
 - **Never mock value objects, data classes, or pure in-process logic** — Money-style types, DTOs, dates, IDs, collections, mappers, and validators are constructed for real; only dependencies that cross a process boundary (databases, external services, message queues) get mocked or faked.
 - **Logic-owning vs. orchestrating methods** — methods with real conditional logic are tested exhaustively; methods that just wire calls together get a representative test, not ten redundant ones.
-- **"A test that cannot catch a real bug should not be written"** — if a method has no branching, no transformation, no error handling, and just forwards its arguments to a dependency, the test is skipped. It would only verify Mockito wiring, not application behavior.
+- **A test that cannot catch a real bug should not be written** — if a method has no branching, no transformation, no error handling, and just forwards its arguments to a dependency, the test is skipped. It would only verify Mockito wiring, not application behavior.
 
 In total, the skill covers 14 rules (Rule 0 through Rule 13), from planning down to descriptive failure messages, each with a rationale rather than just a directive.
 
@@ -213,7 +213,7 @@ A naive setup — copying the skill files into `~/.claude/skills` and `~/.claude
 ```bash
 git clone https://github.com/sri-chalam/ai-tools.git
 ln -s /path/to/ai-tools/skills/engineering/junit-guidelines ~/.claude/skills/junit-guidelines
-ln -s /path/to/ai-tools/agents/engineering/junit-guidelines/junit-validator.md ~/.claude/agents/junit-validator.md
+ln -s /path/to/ai-tools/skills/engineering/junit-guidelines/agents/junit-validator.md ~/.claude/agents/junit-validator.md
 ```
 
 After that, the AI coding agent is restarted, and the skill is picked up automatically whenever something matching `src/test/**/*.java`, `**/*Test.java`, or `**/*Tests.java` is touched. Auto-loading can occasionally be skipped when the context doesn't clearly indicate test-related work, so the skill can also be invoked explicitly with `/junit-guidelines` — worth doing whenever it needs to be certain the skill is loaded rather than left to be inferred.
