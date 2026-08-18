@@ -1608,7 +1608,6 @@ Before running the build, reformat all existing source files to conform to the n
 ./gradlew spotlessApply
 ```
 
-
 #### 6a.5 Verify Library and Plugin Upgrades
 
 After upgrading libraries and plugins, verify the changes compile successfully:
