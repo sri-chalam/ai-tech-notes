@@ -132,6 +132,7 @@ Step 6: Build Tool Detection
 Step 6a: Upgrade Known Java 21 Incompatible Libraries and Plugins
 - If Lombok present AND version < 1.18.30 → Upgrade to latest version
 - If MapStruct present AND version < 1.5.5 → Upgrade to latest version
+- If JaCoCo present AND version < 0.8.11 → Upgrade to latest version
 - If google-java-format plugin present → Comment out and add Spotless plugin
 - Verify upgraded dependencies resolve successfully
 
@@ -1600,7 +1601,93 @@ If the build file has tasks that depended on google-java-format tasks, update th
 | `googleJavaFormat` | `spotlessApply` |
 | `verifyGoogleJavaFormat` | `spotlessCheck` |
 
-#### 6a.4 Verify Library and Plugin Upgrades
+##### Action E: Apply Spotless formatting to existing code
+
+Before running the build, reformat all existing source files to conform to the new Spotless rules. Skipping this step will cause `spotlessCheck` to fail on pre-existing code formatted by the old google-java-format version.
+
+```bash
+./gradlew spotlessApply
+```
+
+#### 6a.5 Check and Upgrade JaCoCo to Latest Version (If Present)
+
+JaCoCo is a code coverage library. If present, upgrade to the latest version for Java 21/25 class file support and better stability (JaCoCo library latest versions are backwards compatible).
+
+**🔴 Logging for this step:**
+- If JaCoCo is not found: Log "JaCoCo not present - skipped"
+- If JaCoCo is found and upgraded: Log "JaCoCo upgraded from [previous_version] to latest version [new_version]"
+- If JaCoCo plugin is applied but no explicit `toolVersion` is set: Log "JaCoCo present with no explicit toolVersion - toolVersion added to pin latest version [new_version]"
+
+**Check if JaCoCo is present:**
+
+```bash
+# Search for the JaCoCo plugin in build files
+grep -r "id 'jacoco'\|id(\"jacoco\")\|jacoco {" --include="build.gradle*" .
+```
+
+**If JaCoCo is found, check the version:**
+
+```bash
+# Extract toolVersion from build.gradle, if explicitly set
+grep -A2 "jacoco {" build.gradle build.gradle.kts 2>/dev/null | grep -i "toolVersion"
+
+# Or from gradle.properties
+grep -i "jacoco" gradle.properties 2>/dev/null
+
+# Or from version catalog
+grep -A1 "jacoco" gradle/libs.versions.toml 2>/dev/null
+```
+
+**Note:** If the `jacoco` plugin is applied but no `jacoco { toolVersion = ... }` block is present, the project uses Gradle's bundled default JaCoCo version, which may be older than 0.8.11. Treat this as "present" and add an explicit `toolVersion` pinned to the latest version.
+
+**Upgrade JaCoCo to the latest version (minimum 0.8.11 required):**
+
+First, find the latest JaCoCo version from Maven Central:
+```bash
+# Search for latest JaCoCo release version on Maven Central
+curl -s https://repo1.maven.org/maven2/org/jacoco/org.jacoco.core/maven-metadata.xml \
+  | xmllint --xpath "string(//versioning/latest)" -
+```
+
+Use the latest version retrieved above. If the Maven Central query fails, use the fallback version 0.8.15.
+
+For `build.gradle` (Groovy DSL):
+```groovy
+// Before
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+// After - use latest version (0.8.15 or higher)
+jacoco {
+    toolVersion = "<LATEST_VERSION>"
+}
+```
+
+For `build.gradle.kts` (Kotlin DSL):
+```kotlin
+// Before
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+// After - use latest version (0.8.15 or higher)
+jacoco {
+    toolVersion = "<LATEST_VERSION>"
+}
+```
+
+For `gradle/libs.versions.toml` (Version Catalog):
+```toml
+[versions]
+# Before
+jacoco = "0.8.10"
+
+# After - use latest version (0.8.15 or higher)
+jacoco = "<LATEST_VERSION>"
+```
+
+#### 6a.6 Verify Library and Plugin Upgrades
 
 After upgrading libraries and plugins, verify the changes compile successfully:
 
