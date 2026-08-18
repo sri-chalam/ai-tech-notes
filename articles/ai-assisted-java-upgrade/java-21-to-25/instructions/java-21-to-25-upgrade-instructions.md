@@ -1603,7 +1603,15 @@ If the build file has tasks that depended on google-java-format tasks, update th
 | `googleJavaFormat` | `spotlessApply` |
 | `verifyGoogleJavaFormat` | `spotlessCheck` |
 
-#### 6a.4 Verify Library and Plugin Upgrades
+##### Action E: Apply Spotless formatting to existing code
+
+Before running the build, reformat all existing source files to conform to the new Spotless rules. Skipping this step will cause `spotlessCheck` to fail on pre-existing code formatted by the old google-java-format version.
+
+```bash
+./gradlew spotlessApply
+```
+
+#### 6a.5 Verify Library and Plugin Upgrades
 
 After upgrading libraries and plugins, verify the changes compile successfully:
 
