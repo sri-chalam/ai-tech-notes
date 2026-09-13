@@ -297,25 +297,11 @@ Step 3: /implement — build it, review before committing
 > /implement the ticket "01: Phase 2a — Reporting Pipeline Endpoint".
 Do not commit the changes. They will be reviewed first.
 
-# Installation of Matt’s Skills
-
-## Claude Code
-
-Terminal Command:
-
-> claude plugins install mattpocock-skills
-
 # The Grilling Skills: `/grill-me` and `/grill-with-docs`
 
-This is one of the most useful skills in the set. Even a well-written ticket
-leaves gaps where the model has to guess, and the model turns out to be very good
-at finding exactly those edge cases and asking about them. Both skills run the same
-relentless interview: rounds of questions until you and the agent share one
-understanding of what is being built.
+These are among the most useful skills in the set. Even a well-written ticket leaves gaps where the model has to guess, and the model turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: until the developer and the agent share one understanding of what is being built.
 
-This is also where grilling differs from plan mode. Plan mode is eager to produce a
-plan, which is the opposite of staying in inquiry. Grilling delays the artifact and
-spends the time reaching agreement first.
+This is also where grilling differs from plan mode. Plan mode is eager to produce a plan, which is the opposite of staying in inquiry. Grilling delays the artifact and spends the time reaching agreement first.
 
 **Which one to use** depends on whether the session needs to read the codebase and update the glossary and ADRs.
 
@@ -333,14 +319,13 @@ background, and a genuine trade-off. Most sessions write none, and that is norma
 
 **Two ways it earns its place.** For a feature that is still only a vague idea, grilling will take it apart and force a decision on what happens in each case. Where written requirements already exist, invoking it is a cheap way to find the cases they leave out.
 
-**Keep the scope small.** The number of questions tracks how vague the input is: a loose idea produces many, a solid spec produces few. Rounds matter more than questions — forty-odd questions over four rounds is an ordinary session. A session running to hundreds is a signal that the scope is too large, not a sign of thoroughness. For a larger application, the better approach is to write the initial spec, split it into phases, and grill one phase at a time. This keeps each session sharp, and it avoids forcing the team to answer questions about a later phase they have not thought through yet.
+**Large scope is the usual cause of long sessions.** The number of questions tracks how vague the input is: a loose idea produces many, a solid spec produces few. Rounds matter more than questions — forty-odd questions over four rounds is an ordinary session. A session running to hundreds is a signal that the scope is too large, not a sign of thoroughness. For a larger application, the better approach is to write the initial spec, split it into phases, and grill one phase at a time. This keeps each session sharp, and it avoids forcing the team to answer questions about a later phase they have not thought through yet.
 
-**Some questions need something to look at first.** "How should this interaction feel?" or "one long form or three pages?" need something to react to. Talking your way through those is where sessions balloon. Build a throwaway version, look at it, then come back and answer in one line.
+**Some questions need something to look at first.** Some things are easier to answer by looking than by thinking. Whether a web page should be one long form or three shorter pages is one of them: a rough version settles it in seconds, while discussing it in the abstract goes in circles. Building a throwaway version first, then returning to the session, is faster.
 
-**Stay active.** The skill asks the questions, but the scope stays with the developer. The real failure mode is answering "agreed" to everything and ending up with a plan the agent wrote and nobody examined. Pushing back, and saying "I don't know" where that is the honest answer, makes the generated code noticeably better, because the output tracks the quality of the answers rather than the number of questions asked.
+**An active participant is required.** The skill asks the questions, but the scope stays with the developer. The real failure mode is answering "agreed" to everything and ending up with a plan the agent wrote and nobody examined. Pushing back, and saying "I don't know" where that is the honest answer, makes the generated code noticeably better, because the output tracks the quality of the answers rather than the number of questions asked.
 
-The understanding built during the session is the valuable part, so a fresh conversation
-should not be started once it ends. That context can be handed to `/to-spec` to be written up as a spec, or to `/to-tickets` to be turned directly into tickets, which is quicker and suits smaller changes.
+The understanding built during the session is the valuable part, so a fresh conversation should not be started once it ends. That context can be handed to `/to-spec` to be written up as a spec, or to `/to-tickets` to be turned directly into tickets, which is quicker and suits smaller changes.
 
 # The Classic Sources Behind the Skills
 
@@ -376,8 +361,15 @@ In a minority of cases, though, the developer had to look closely.
 - **The same constant declared in several classes.** The agent was asked to extract them into a single constants class.
 - **An implementation fitted to the first ticket only.** All field and property names followed the first data source. A second source, whose naming differed considerably, had not been allowed for — the instructions had never asked for a design that would accommodate it.
 
-# References
+# Installation of Matt’s Skills
 
+## Claude Code
+
+Terminal Command:
+
+> claude plugins install mattpocock-skills
+
+# References
 
 **Design, Code Best Practices**
 <https://www.youtube.com/watch?v=v4F1gFy-hqg>
