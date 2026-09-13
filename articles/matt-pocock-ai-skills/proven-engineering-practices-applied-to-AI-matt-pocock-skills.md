@@ -305,6 +305,56 @@ Terminal Command:
 
 > claude plugins install mattpocock-skills
 
+# The Grilling Skills: `/grill-me` and `/grill-with-docs`
+
+This is one of the most useful skills in the set. Even a well-written ticket
+leaves gaps where the model has to guess, and the model turns out to be very good
+at finding exactly those edge cases and asking about them. Both skills run the same
+relentless interview: rounds of questions until you and the agent share one
+understanding of what is being built.
+
+This is also where grilling differs from plan mode. Plan mode is eager to produce a
+plan, which is the opposite of staying in inquiry. Grilling delays the artifact and
+spends the time reaching agreement first.
+
+**Which one to use** depends on whether the session needs to read the codebase and update the glossary and ADRs.
+
+`/grill-me` writes no files. It reads no code and needs no repo. All it leaves is a
+clearer idea of the problem. It suits a small ticket, where the domain terms and the
+architecture decisions are not going to change. **This skill can be used outside the code. A product owner can grill an initial requirements document to find the cases it misses**.
+
+`/grill-with-docs` asks the same questions, but it reads the codebase and saves what it
+learns. New terms go into `CONTEXT.md`, the project's glossary. Big decisions go into
+`docs/adr/` as ADRs. It suits a larger ticket or feature, the kind that adds new words
+to the project or changes an architecture decision.
+
+A decision only becomes an ADR if it is hard to reverse, confusing without the
+background, and a genuine trade-off. Most sessions write none, and that is normal.
+
+**Two ways it earns its place.** For a feature that is still only a vague idea, grilling will take it apart and force a decision on what happens in each case. Where written requirements already exist, invoking it is a cheap way to find the cases they leave out.
+
+**Keep the scope small.** The number of questions tracks how vague the input is: a loose idea produces many, a solid spec produces few. Rounds matter more than questions — forty-odd questions over four rounds is an ordinary session. A session running to hundreds is a signal that the scope is too large, not a sign of thoroughness. For a larger application, the better approach is to write the initial spec, split it into phases, and grill one phase at a time. This keeps each session sharp, and it avoids forcing the team to answer questions about a later phase they have not thought through yet.
+
+**Some questions need something to look at first.** "How should this interaction feel?" or "one long form or three pages?" need something to react to. Talking your way through those is where sessions balloon. Build a throwaway version, look at it, then come back and answer in one line.
+
+**Stay active.** The skill asks the questions, but the scope stays with the developer. The real failure mode is answering "agreed" to everything and ending up with a plan the agent wrote and nobody examined. Pushing back, and saying "I don't know" where that is the honest answer, makes the generated code noticeably better, because the output tracks the quality of the answers rather than the number of questions asked.
+
+The understanding built during the session is the valuable part, so a fresh conversation
+should not be started once it ends. That context can be handed to `/to-spec` to be written up as a spec, or to `/to-tickets` to be turned directly into tickets, which is quicker and suits smaller changes.
+
+# The Classic Sources Behind the Skills
+
+These skills don't invent a methodology. Each takes a principle that software engineering already trusts and wires it into the way an agent works — so the table below reads as a map from old book, to principle, to the skills that apply it.
+
+| Classic source | Principle | Skills that apply it |
+|---|---|---|
+| *A Philosophy of Software Design* — John Ousterhout | Deep modules | `/codebase-design`, `/to-spec`, `/improve-codebase-architecture` |
+| *Working Effectively with Legacy Code* — Michael Feathers | Seams | `/codebase-design`, `/tdd`, `/to-spec` |
+| *The Pragmatic Programmer* — Thomas & Hunt | Tracer bullets / vertical slices | `/to-tickets`, `/implement`, `/tdd` |
+| *Domain-Driven Design* — Eric Evans | Ubiquitous language | `/domain-modeling`, `/grill-with-docs` |
+| *Refactoring* — Martin Fowler | Code smells (the review baseline) | `/code-review` |
+| *Extreme Programming Explained* / TDD — Kent Beck | Test-driven development; continuous design | `/tdd`, `/implement`, `/improve-codebase-architecture` |
+
 # What the Agent Missed, and Where to Watch
 
 On a recent greenfield application, the results were strong. The modularisation and design were excellent, the generated code was clean, and the tests were meaningful rather than decorative. Most of the work needed no intervention at all.
@@ -341,3 +391,10 @@ In a minority of cases, though, the developer had to look closely.
 **Mats AI Skills Documentation**
 
 <https://github.com/mattpocock/skills/tree/main/docs/engineering> 
+
+
+**Rules Distilled from Classic Software Design Books**
+
+Matt's skills bring a handful of fundamentals into the agent's workflow. This repository takes the same idea wider: classic engineering books — *A Philosophy of Software Design* among them — each distilled into agent-readable rules. Rather than adopting a book wholesale, a few rules can be taken from each to suit a project's needs.
+
+<https://github.com/ciembor/agent-rules-books>
