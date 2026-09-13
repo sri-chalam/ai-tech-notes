@@ -299,7 +299,7 @@ Do not commit the changes. They will be reviewed first.
 
 # The Grilling Skills: `/grill-me` and `/grill-with-docs`
 
-These are among the most useful skills in the set. Even a well-written ticket leaves gaps where the model has to guess, and the model turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: until the developer and the agent share one understanding of what is being built.
+These are among the most useful skills in the set. Even a well-written ticket leaves gaps where the model has to guess, and the model turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: rounds of questions until the developer and the agent share one understanding of what is being built.
 
 This is also where grilling differs from plan mode. Plan mode is eager to produce a plan, which is the opposite of staying in inquiry. Grilling delays the artifact and spends the time reaching agreement first.
 
@@ -317,7 +317,7 @@ to the project or changes an architecture decision.
 A decision only becomes an ADR if it is hard to reverse, confusing without the
 background, and a genuine trade-off. Most sessions write none, and that is normal.
 
-**Two ways it earns its place.** For a feature that is still only a vague idea, grilling will take it apart and force a decision on what happens in each case. Where written requirements already exist, invoking it is a cheap way to find the cases they leave out.
+**Vague ideas and finished requirements both benefit.** For a feature that is still only a vague idea, grilling will take it apart and force a decision on what happens in each case. Where written requirements already exist, invoking it is a cheap way to find the cases they leave out.
 
 **Large scope is the usual cause of long sessions.** The number of questions tracks how vague the input is: a loose idea produces many, a solid spec produces few. Rounds matter more than questions — forty-odd questions over four rounds is an ordinary session. A session running to hundreds is a signal that the scope is too large, not a sign of thoroughness. For a larger application, the better approach is to write the initial spec, split it into phases, and grill one phase at a time. This keeps each session sharp, and it avoids forcing the team to answer questions about a later phase they have not thought through yet.
 
