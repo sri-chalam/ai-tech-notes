@@ -189,7 +189,7 @@ These skills are the opposite. Each is a short Markdown file that can be read in
 
 The skills are also worth reading as examples of the form. Each is a short Markdown file that states its discipline and stops — no preamble, no restating the obvious to the model. Teams writing their own skills learn more from these than from any guide, and \`writing-for-agents\` sets out the principles behind them explicitly. 
 
-The set also reaches past code. `/teach` runs a multi-session lesson using the working directory as a stateful workspace; `/handoff` compacts a conversation so another agent can continue it; 
+The set also goes beyond writing code. `/teach` runs a multi-session lesson using the working directory as a stateful workspace, and can teach subjects as varied as Korean, piano and cloud certifications; `/handoff` compacts a conversation so another agent can continue it; 
 
 `/writing-for-agents` covers how to write documents an agent will read — skills, `AGENTS.md`, `CLAUDE.md`, and anything reached by a pointer — so a draft skill can be written against its principles, or handed to the agent to be checked against them.
 
@@ -260,7 +260,7 @@ Compacts the current conversation into a handoff document so a fresh session, or
 
 ### /teach
 
-Teaches a concept or skill across multiple sessions, using the working directory as a stateful teaching workspace. 
+Teaches a topic over several sessions rather than in one go: the mission, sources, lessons and a record of progress are saved as files, so each session picks up where the last one ended. **A developer joining an unfamiliar codebase can point `/teach` at it and learn it piece by piece**.
 
 ### /writing-for-agents
 
