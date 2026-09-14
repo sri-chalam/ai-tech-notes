@@ -16,7 +16,7 @@ This article covers what a good AI workflow needs, how these skills provide it, 
 
 Dex Horthy of HumanLayer describes a coding session as having two zones. Early on, while the context window is still lightly loaded, the model is in the **smart zone**: attention is focused, recall is reliable, and output is usable. As the window fills, the session crosses into the **dumb zone**, **where quality degrades sharply: instructions given earlier are quietly ignored, work already done is repeated, the agent loops instead of converging, its tool calls start coming out malformed, and the code it produces gets worse**. Cost moves the other way — every turn re-sends the whole conversation, so the tokens spent per step keep rising as the usefulness of each step falls.
 
-The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **40% of the context window** — around 120K tokens on a 200K-token model such as Sonnet — while stressing that this is a heuristic, not a hard limit: it moves with the model and with the complexity of the task.
+The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **40% of the context window** — around 80K tokens on a 200K-token model such as Sonnet — while stressing that this is a heuristic, not a hard limit: it moves with the model and with the complexity of the task.
 
 A workflow's first job, then, is to keep sessions inside the smart zone. That gives a short list of things it must provide:
 
@@ -280,6 +280,8 @@ Most work follows the same three steps.
 > align slice build
 
 `/grill-with-docs` settles what is being built and in whose vocabulary. `/to-tickets` breaks the agreed change into vertical slices, each sized for one fresh context window. `/implement` then builds them one at a time, driving `/tdd` at the agreed seams and closing with `/code-review` before anything is committed. For larger work, `/to-spec` can be inserted after the grilling to publish a spec to the issue tracker first.
+
+The first two steps belong in one session. `/to-tickets` works from the conversation that grilling produced, so the tickets should be written while that detail is still in context. After the tickets are written, the session should end. Grilling fills a context window with discussion that implementation does not need, and carrying it forward can push the build into the dumb zone. A short grilling session and a small ticket may well fit in one window, but the habit is worth keeping: starting `/implement` in a new session keeps it in the smart zone, with the tickets carrying forward everything that matters.
 
 The sequence is a habit, not a rule. What matters is the order of concerns — align, then slice, then build — not the exact chain of commands.
 
