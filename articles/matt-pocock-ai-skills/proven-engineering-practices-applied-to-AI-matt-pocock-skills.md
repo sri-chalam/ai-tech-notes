@@ -16,7 +16,7 @@ This article covers what a good AI workflow needs, how these skills provide it, 
 
 Dex Horthy of HumanLayer describes a coding session as having two zones. Early on, while the context window is still lightly loaded, the model is in the **smart zone**: attention is focused, recall is reliable, and output is usable. As the window fills, the session crosses into the **dumb zone**, **where quality degrades sharply: instructions given earlier are quietly ignored, work already done is repeated, the agent loops instead of converging, its tool calls start coming out malformed, and the code it produces gets worse**. Cost moves the other way — every turn re-sends the whole conversation, so the tokens spent per step keep rising as the usefulness of each step falls.
 
-The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **60% of the context window** — around 120K tokens on a 200K-token model such as Sonnet — while stressing that this is a heuristic, not a hard limit: it moves with the model and with the complexity of the task.
+The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **40% of the context window** — around 120K tokens on a 200K-token model such as Sonnet — while stressing that this is a heuristic, not a hard limit: it moves with the model and with the complexity of the task.
 
 A workflow's first job, then, is to keep sessions inside the smart zone. That gives a short list of things it must provide:
 
@@ -30,6 +30,7 @@ None of these are properties of the model. They are properties of the process �
 Matt skills answer this list directly: `/to-tickets` sizes the work, sub-agents keep the context small, one ticket per session bounds it, and `/handoff` carries what matters into the next one.
 
 ## Models Are Not Trained to Write Maintainable Code
+
 Dex Horthy explains why models write code that is hard to maintain. The models are trained against benchmarks that ask only two things: was the bug fixed, and was anything else broken. A model that passes both gets the reward. Nothing in that reward punishes bad design, so the model adds a try/catch it does not need, just to make a test pass. As he puts it, if the model knew what good code looked like, it would have written it the first time.
 
 This is the gap the skills fill. They give the agent the principles that produce good code — deep modules, clear seams, a shared vocabulary — because nothing in its training supplies them.
@@ -395,7 +396,8 @@ In the project where these skills were used, the module structure and the divisi
 
 <https://github.com/mattpocock/skills/tree/main/docs/engineering> 
 
-**Why Software Factories Fail — Dex Horthy — Why Models Struggle with Code Maintainability**
+**Why Software Factories Fail — Dex Horthy**
+Why models struggle with code maintainability
 
 <https://www.youtube.com/watch?v=Ib5GBkD555M>
 
