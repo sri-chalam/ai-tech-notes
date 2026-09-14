@@ -29,6 +29,11 @@ None of these are properties of the model. They are properties of the process �
 
 Matt skills answer this list directly: `/to-tickets` sizes the work, sub-agents keep the context small, one ticket per session bounds it, and `/handoff` carries what matters into the next one.
 
+## Models Are Not Trained to Write Maintainable Code
+Dex Horthy explains why models write code that is hard to maintain. The models are trained against benchmarks that ask only two things: was the bug fixed, and was anything else broken. A model that passes both gets the reward. Nothing in that reward punishes bad design, so the model adds a try/catch it does not need, just to make a test pass. As he puts it, if the model knew what good code looked like, it would have written it the first time.
+
+This is the gap the skills fill. They give the agent the principles that produce good code — deep modules, clear seams, a shared vocabulary — because nothing in its training supplies them.
+
 ## Keep the Main Context Clean with Sub-Agents
 
 Some work does not belong in the main session at all. **Research** must not bring back everything it read, and a **review** must not inherit the reasoning that produced the code. **A workflow should push such tasks to sub-agents, each working in its own context and returning only its findings**.
@@ -369,6 +374,12 @@ Terminal Command:
 
 > claude plugins install mattpocock-skills
 
+# Conclusion
+
+A good codebase is one that is easy to understand and easy to change. That has always been true, but it matters more now than it used to: an agent works well in a well-structured codebase and badly in a tangled one, so bad code has become the most expensive it has ever been.
+
+In the project where these skills were used, the module structure and the division of work were both easy to follow and easy to modify.
+
 # References
 
 **Design, Code Best Practices**
@@ -384,6 +395,9 @@ Terminal Command:
 
 <https://github.com/mattpocock/skills/tree/main/docs/engineering> 
 
+**Why Software Factories Fail — Dex Horthy — Why Models Struggle with Code Maintainability**
+
+<https://www.youtube.com/watch?v=Ib5GBkD555M>
 
 **Rules Distilled from Classic Software Design Books**
 
