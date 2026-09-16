@@ -106,7 +106,7 @@ The discipline enforced around that loop is what makes it real, not just an idea
 > "The best modules are deep. They allow a lot of functionality to be accessed through a simple interface."
 — John Ousterhout, *A Philosophy of Software Design*
 
-One point is easy to miss: **codebases that are easy to test are also easy for an AI to work in.** Humans and agents need the same thing — a small surface to learn, and a clear place to stand and observe behavior.
+One point is easy to miss: **codebases that are easy to test are also easy for an agent to work in.** Humans and agents need the same thing — a small surface to learn, and a clear place to stand and observe behavior.
 
 Module design turns on a single measure: **depth** — how much behaviour sits behind an interface.
 
@@ -124,7 +124,7 @@ Deep is the goal; shallow is what to avoid.
 
 An agent will happily accept a task far too large for it. Thousands of lines can be produced, and which part is wrong will be difficult to tell. The rule from *The Pragmatic Programmer* applies directly: a task that is too big should never be taken on.
 
-Two skills keep the work small at two scales: `/tdd` inside a slice, where a single failing test bounds each cycle, and `/to-tickets` across slices.
+Two skills keep the work small: `/to-tickets` splits the change into tickets, and `/tdd` keeps each cycle within a ticket down to one failing test.
 
 `/to-tickets` runs before any code is written. A plan, spec or conversation is broken into **tracer-bullet tickets**:
 
@@ -153,7 +153,7 @@ The skills provided by Matt such as /tdd, /implement, /codebase-design, /to-tick
 - **Spec** — does the diff faithfully implement the originating issue? Missing requirements, unrequested behaviour, and wrongly implemented ones are reported, each quoting the spec line it came from.
 - **Standards** — does the diff follow the repository's documented coding standards, or, where none exist, a baseline of Fowler code smells? Documented standards override the baseline.
 
-**Both axes run as separate sub-agents, in parallel. Each starts on a clean context** — carrying neither the reasoning that produced the code nor the other axis's findings — so the** review is a fresh pair of eyes** rather than the author marking its own work.
+**Both axes run as separate sub-agents, in parallel. Each starts on a clean context** — carrying neither the reasoning that produced the code nor the other axis's findings. Without this, the same agent that wrote the code would be reviewing it, carrying forward the same assumptions that produced the problem in the first place.
 
 `/code-review` is invoked automatically at the end of `/implement`, and can also be run directly.
 
@@ -167,7 +167,7 @@ These skills are the opposite. Each is a short Markdown file that can be read in
 
 The skills are also worth reading as examples of how to write a skill. Each one is a short Markdown file that says what it wants and stops — no preamble, no telling the model things it already knows. A team writing its own skills will learn more from reading these than from any guide.
 
-Matt's skills go beyond writing code. `/teach` teaches a topic over several sessions rather than in one go. The mission, the sources, the lessons and a record of progress are saved as files, so each session picks up where the last one ended. A developer joining an unfamiliar codebase can point `/teach` at it and learn it piece by piece, and outside code it can teach subjects as varied as Korean, piano and cloud certifications.
+Matt's skills go beyond writing code. `/teach` teaches a topic over several sessions, and outside code it can teach subjects as varied as Korean, piano and cloud certifications.
 
 `/handoff` summarises the current conversation into a document that another agent can pick up. It names the skills the next session should use, points to existing specs and tickets rather than repeating them, and removes anything sensitive such as API keys or passwords.
 
@@ -187,15 +187,15 @@ Run once per repository, before anything else. Asks which issue tracker to use, 
 
 #### /grill-with-docs
 
-A relentless design interview that also builds the project's shared language. Combines `/grilling` and `/domain-modeling`: questions are asked in rounds until no branch of the design is left unresolved, while `CONTEXT.md` and ADRs are updated as decisions settle.  
+A relentless design interview that also builds the project's shared language. Combines `/grilling` and `/domain-modeling`: questions are asked in rounds until no branch of the design is left unresolved, while `CONTEXT.md` and Architecture Decision Records (ADRs) are updated as decisions settle.
 
 #### /domain-modeling
 
-Builds and sharpens the project's glossary. Terms that clash are challenged, fuzzy words are made precise, and each definition is written to `CONTEXT.md` as it is agreed. Normally reached through `/grill-with-docs`.  
+Builds and sharpens the project's glossary. Terms that clash are challenged, fuzzy words are made precise, and each definition is written to `CONTEXT.md` as it is agreed. Normally reached through `/grill-with-docs`.
 
 #### /to-spec
 
-Turns the current conversation into a spec and publishes it to the issue tracker. No new interview: it synthesises what has already been discussed, and confirms which modules and seams the change will touch.  
+Turns the current conversation into a spec and publishes it to the issue tracker. No new interview: it synthesises what has already been discussed, and confirms which modules and seams the change will touch.
 
 #### /to-tickets
 
@@ -207,11 +207,11 @@ Builds the work described by a spec or ticket, driving `/tdd` at the agreed seam
 
 #### /tdd
 
-Red-green-refactor, one vertical slice at a time. Defines what a good test is, where tests belong, and which anti-patterns to reject.  
+Red-green cycles, one test at a time. Defines what a good test is, where tests belong, and which anti-patterns to reject.
 
 #### /codebase-design
 
-The shared vocabulary for designing deep modules: a lot of behaviour behind a small interface, placed at a clean seam and testable through it.  
+The shared vocabulary for designing deep modules: a lot of behaviour behind a small interface, placed at a clean seam and testable through it.
 
 #### /code-review
 
@@ -219,7 +219,7 @@ Reviews the diff since a fixed point along two independent axes — Spec and Sta
 
 #### /diagnosing-bugs
 
-A disciplined loop for hard bugs and performance regressions, gated phase by phase: build a feedback loop that goes red on this bug → minimise → hypothesise → instrument → fix → add a regression test. 
+A disciplined loop for hard bugs and performance regressions, gated phase by phase: build a feedback loop that goes red on this bug → minimise → hypothesise → instrument → fix → add a regression test.
 
 ### Other Useful Skills
 
@@ -232,7 +232,7 @@ Four things make it worth knowing separately:
 - **It writes nothing**. No `CONTEXT.md` entries, no ADRs. The output is a shared understanding, not a document — so it can be used where there is no repository to write to. 
 - **It is tiny.** The skill file does one thing: invoke the underlying `grilling` interview. That same primitive sits behind `/grill-with-docs`, `/triage`, `/wayfinder` and `/improve-codebase-architecture`. 
 - **It is not for developers only.** Any plan, decision or specification can be grilled. A product owner can use it to find the gaps and uncovered cases in a requirements document before it reaches engineering — the questions surface what the document left implicit. 
-- **It stands alone**. No repository, no issue tracker, no prior setup, and no other skill. It can be the only skill a person ever uses and still be worth having.
+- **It stands alone**. No repository, no issue tracker, no prior setup, and no other skill. It is very useful on its own, even if none of Matt's other skills are used.
 
 #### /handoff
 
@@ -282,23 +282,17 @@ Do not commit the changes. They will be reviewed first.
 
 ## The Grilling Skills: `/grill-me` and `/grill-with-docs`
 
-These are among the most useful skills in the set. Even a well-written ticket leaves gaps where the model has to guess, and the model turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: rounds of questions until the developer and the agent share one understanding of what is being built.
+These are among the most useful of Matt's skills. Even a well-written ticket leaves gaps where the model has to guess, and the agent turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: rounds of questions until the developer and the agent share one understanding of what is being built.
 
 This is also where grilling differs from plan mode. Plan mode is eager to produce a plan, which is the opposite of staying in inquiry. Grilling delays the artifact and spends the time reaching agreement first.
 
 **Which one to use** depends on whether the session needs to read the codebase and update the glossary and ADRs.
 
-`/grill-me` writes no files. It reads no code and needs no repo. All it leaves is a
-clearer idea of the problem. It suits a small ticket, where the domain terms and the
-architecture decisions are not going to change. **This skill can be used outside the code. A product owner can grill an initial requirements document to find the cases it misses**.
+`/grill-me` writes no files. It reads no code and needs no repo. All it leaves is a clearer idea of the problem. It suits a small ticket, where the domain terms and the architecture decisions are not going to change. **This skill can be used outside the code. A product owner can grill an initial requirements document to find the cases it misses**.
 
-`/grill-with-docs` asks the same questions, but it reads the codebase and saves what it
-learns. New terms go into `CONTEXT.md`, the project's glossary. Big decisions go into
-`docs/adr/` as ADRs. It suits a larger ticket or feature, the kind that adds new words
-to the project or changes an architecture decision.
+`/grill-with-docs` asks the same questions, but it reads the codebase and saves what it learns. New terms go into `CONTEXT.md`, the project's glossary. Big decisions go into `docs/adr/` as ADRs. It suits a larger ticket or feature, the kind that adds new words to the project or changes an architecture decision.
 
-A decision only becomes an ADR if it is hard to reverse, confusing without the
-background, and a genuine trade-off. Most sessions write none, and that is normal.
+A decision only becomes an ADR if it is hard to reverse, confusing without the background, and a genuine trade-off. Most sessions write none, and that is normal.
 
 **Vague ideas and finished requirements both benefit.** For a feature that is still only a vague idea, grilling will take it apart and force a decision on what happens in each case. Where written requirements already exist, invoking it is a cheap way to find the cases they leave out.
 
@@ -329,20 +323,7 @@ On a recent greenfield application, the results were strong. The modularisation 
 
 In a minority of cases, though, the developer had to look closely.
 
-> **Note:** The misses below are not attributable to Matt Pocock's skills. They reflect general model behaviour, or missing instructions in `AGENTS.md` and the team's own skills — and most were resolved by adding the instruction that was absent.
-
-### Observed Gaps
-
-- **An outdated version of a new dependency.** A library was added correctly, but pinned to an old version. Nothing in the code looked wrong; the developer had to check the version explicitly.
-- **Field and type mismatches in generated classes.** A few classes declared fields whose types did not match the values actually assigned to them.
-- **A silently lossy type mapping.** The Arrow type `dictionary<uint8,utf8>` was mapped to `VarCharVector`, which would have produced a `ClassCastException` at runtime.
-- **Missing tests exactly where the risk was.** No tests covered the Arrow type mapping until this was pointed out, after which they were added.
-- **An incomplete request payload.** Building the request payload object produced repeated errors: some fields were omitted, others were given the wrong type.
-- **Logging absent at critical points.** Read operations and similar key steps were left without logging. The logging skill was then amended so that these points would not be missed again.
-- **Detail buried in the log message.** The `eventData` was written into the `message` string rather than as structured fields. The code was corrected and the skill updated to prevent a recurrence.
-- **Placeholder variable names.** Names such as `grouped` described the mechanics rather than the meaning. An instruction was added requiring names to reflect the business purpose of the value.
-- **The same constant declared in several classes.** The agent was asked to extract them into a single constants class.
-- **An implementation fitted to the first ticket only.** All field and property names followed the first data source. A second source, whose naming differed considerably, had not been allowed for — the instructions had never asked for a design that would accommodate it.
+> **Note:** The misses below are NOT attributable to Matt Pocock's skills. They reflect general agent behaviour, or missing instructions in `AGENTS.md` and the team's own skills — and most were resolved by adding the instruction that was absent.
 
 ## Installation of Matt’s Skills
 
