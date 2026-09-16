@@ -66,14 +66,6 @@ Two details make this work well in practice:
 
 A vague idea produces many rounds of questions. A well-considered plan produces few. In either case, the change is better understood at the end of the session than at the start.
 
-**Example Prompt**
-
-> /grill-with-docs Review the requirements in @docs/requirements/feature-requirements.md.
-> 
-> I want to implement them iteratively. For now, ask questions only about Phase 1 under "Phased Implementation." Do not ask about later phases yet.
-> 
-> Ask one question at a time.
-
 ### The AI and the Developer Use the Same Terminology
 
 Every team has its own business vocabulary. Domain-Driven Design calls this the ***ubiquitous language***: one set of terms shared by the business, the developers, and the code.
@@ -83,16 +75,6 @@ An AI agent has none of it. It is dropped into a repository and left to guess th
 The fix is a shared glossary, kept in a `CONTEXT.md` file at the root of the repository.
 
 The `/domain-modeling` skill (invoked by `/grill-with-docs`) builds and maintains `CONTEXT.md` file. The codebase is read, the terms in use are put to the developer, and each definition is recorded as it is settled. A pointer to `CONTEXT.md` is then added to `AGENTS.md`, so every later session speaks and understands the same business language that is usually present in the Jira issues.
-
-**Example Prompt**
-
-The skill /grill-with-docs invokes /grilling and /domain-modeling skills. So the same prompt in previous example is used to create `CONTEXT.md`.
-
-> /grill-with-docs Review the requirements in @docs/requirements/feature-requirements.md.
-> 
-> I want to implement them iteratively. For now, ask questions only about Phase 1 under "Phased Implementation." Do not ask about later phases yet.
-> 
-> Ask one question at a time.
 
 ### Feedback Loops: Test-Driven Development
 
@@ -116,12 +98,6 @@ The discipline enforced around that loop is what makes it real, not just an idea
 - **Vertical slices, not horizontal ones.** An agent's instinct is to build each layer in isolation: asked for a database service, it produces every endpoint, the request models, error middleware, auth, rate limiting and logging — and only then tries to connect to the database, where the connection string turns out to be wrong. A **tracer bullet** is the opposite: one thin slice cut through every layer at once, tested immediately, so the critical path is proven before anything is widened.
 - **Behavior is tested, not implementation.** Tests are placed at a **seam**. A good test reads like a specification and survives refactoring.
 - **Seams are settled before any test exists.** The agent proposes them and the developer confirms — never discovered along the way.
-
-**Example Prompt**
-
-The skill /implement invokes /tdd and /codebase-design skills. 
-
-> /implement the ticket "01: Phase 1 — Insurance policy creation" under Phase 3. Do not commit the changes. I want to review the changes before commit. 
 
 ### Design the Interface, Delegate the Implementation
 
@@ -155,10 +131,6 @@ Two skills keep the work small at two scales: `/tdd` inside a slice, where a sin
 - Each ticket is sized to fit in a single fresh context window.
 - Each ticket declares what **blocks** it, so the order of work is explicit.
 
-**Example Prompt**
-
-> /to-tickets Generate tickets for the changes discussed above. 
-
 ### Build Code According to Good Design Practices
 
 > "Invest in the design of the system *every day*."
@@ -181,9 +153,7 @@ The skills provided by Matt such as /tdd, /implement, /codebase-design, /to-tick
 
 **Both axes run as separate sub-agents, in parallel. Each starts on a clean context** — carrying neither the reasoning that produced the code nor the other axis's findings — so the** review is a fresh pair of eyes** rather than the author marking its own work.
 
-**Example Prompt**
-
-> `/code-review` is invoked automatically at the end of `/implement`, and can also be run directly:
+`/code-review` is invoked automatically at the end of `/implement`, and can also be run directly.
 
 ### Adapt the Skills, Don't Be Tied to a Process
 
