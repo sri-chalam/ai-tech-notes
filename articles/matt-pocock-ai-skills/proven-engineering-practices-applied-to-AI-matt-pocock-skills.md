@@ -1,8 +1,8 @@
 # Proven Engineering Practices, Applied to AI: Matt Pocock's Skills
 
-# Introduction
+## Introduction
 
-Matt Pocock's agent skills have struck a nerve: **the repository has passed 250,000 GitHub stars and 21,000 forks** (September 2026) — a scale normally reached only by major frameworks and language runtimes, and extraordinary for a project that ships no code at all, only Markdown. 
+Matt Pocock's agent skills have drawn a lot of attention. **The repository has passed 260,000 GitHub stars and 22,000 forks** (September 2026) — a scale normally reached only by major frameworks and language runtimes, and extraordinary for a project that ships no code at all, only Markdown. 
 
 There is no shortage of AI development workflows: Amazon's AI-DLC and Kiro, GitHub's Spec Kit, BMAD, GSD and others. Most concern themselves with process — the stages a change passes through, the roles involved, the documents produced at each step.  
 
@@ -10,13 +10,15 @@ There is no shortage of AI development workflows: Amazon's AI-DLC and Kiro, GitH
 
 This article covers what a good AI workflow needs, how these skills provide it, and how they fit together in practice.
 
-# What features should an AI Workflow have?
+## What features should an AI Workflow have?
 
-## Context Window - Dumb Zone - Smart Zone
+These are the things a workflow has to supply, because the model does not.
 
-Dex Horthy of HumanLayer describes a coding session as having two zones. Early on, while the context window is still lightly loaded, the model is in the **smart zone**: attention is focused, recall is reliable, and output is usable. As the window fills, the session crosses into the **dumb zone**, **where quality degrades sharply: instructions given earlier are quietly ignored, work already done is repeated, the agent loops instead of converging, its tool calls start coming out malformed, and the code it produces gets worse**. Cost moves the other way — every turn re-sends the whole conversation, so the tokens spent per step keep rising as the usefulness of each step falls.
+### Context Window - Dumb Zone - Smart Zone
 
-The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **40% of the context window** — around 80K tokens on a 200K-token model such as Sonnet — while stressing that this is a heuristic, not a hard limit: it moves with the model and with the complexity of the task.
+Dex Horthy of HumanLayer describes a coding session as having two zones. Early on, while the context window is still lightly loaded, the model is in the **smart zone**: attention is focused, recall is reliable, and output is usable. As the window fills, the session crosses into the **dumb zone**, **where quality degrades sharply: instructions given earlier are quietly ignored, work already done is repeated, it goes round in circles instead of finishing, its tool calls start coming out malformed, and the code it produces gets worse**. Cost rises at the same time. The whole conversation is re-sent on every turn, so the longer the session runs, the more each step costs and the less it achieves.
+
+The boundary arrives earlier than most developers expect. Horthy puts diminishing returns at roughly **40% of the context window** — around 80K tokens on a 200K-token model such as Claude Sonnet — while stressing that this is a rough guide, not a hard limit: it depends on the model and on how complex the task is.
 
 A workflow's first job, then, is to keep sessions inside the smart zone. That gives a short list of things it must provide:
 
@@ -29,31 +31,29 @@ None of these are properties of the model. They are properties of the process �
 
 Matt skills answer this list directly: `/to-tickets` sizes the work, sub-agents keep the context small, one ticket per session bounds it, and `/handoff` carries what matters into the next one.
 
-## Models Are Not Trained to Write Maintainable Code
+### Models Are Not Trained to Write Maintainable Code
 
 Dex Horthy explains why models write code that is hard to maintain. The models are trained against benchmarks that ask only two things: was the bug fixed, and was anything else broken. A model that passes both gets the reward. Nothing in that reward punishes bad design, so the model adds a try/catch it does not need, just to make a test pass. As he puts it, if the model knew what good code looked like, it would have written it the first time.
 
 This is the gap the skills fill. They give the agent the principles that produce good code — deep modules, clear seams, a shared vocabulary — because nothing in its training supplies them.
 
-## Keep the Main Context Clean with Sub-Agents
+### Keep the Main Context Clean with Sub-Agents
 
 Some work does not belong in the main session at all. **Research** must not bring back everything it read, and a **review** must not inherit the reasoning that produced the code. **A workflow should push such tasks to sub-agents, each working in its own context and returning only its findings**.
 
-## Review the Design and the Plan, Not Just the Pull Request 
+### Review the Design and the Plan, Not Just the Pull Request 
 
 An agent will follow a plan faithfully, including a wrong one. Left to itself it commits to a direction early and then spends an entire session building in it.
 
 A workflow must therefore **provide an explicit checkpoint the developer has to pass: the requirement questioned, the architecture and the modules affected agreed, the plan approved** — all before any code is written. Without such a point, the developer's judgement arrives too late to change anything, at pull-request review, when the only remaining options are accept or rework.
 
-# Core Features of Matt Pocock’s Skills
+## Core Features of Matt Pocock’s Skills
 
 The underlying point is simple. **Software engineering fundamentals have not become less important now that AI writes the code. They have become more important, because code now arrives faster than the design can drift**.
 
-## The AI and the Developer Share the Same Understanding
+### The Agent and the Developer Share the Same Understanding
 
-**The most common reason software goes wrong is not bad code. It is misalignment.** The developer is assumed to have understood the requirement. Then the result is seen, and it is not what was meant.
-
-Working with AI is no different. **A communication gap exists between the developer and the model. **Even a carefully written spec has loose ends, and those gaps are quietly filled by the model with its own assumptions. The code compiles, the tests pass — and the result is still wrong.
+**The most common reason software goes wrong is not bad code. It is misalignment.** The developer assumes the agent understood the requirement. The agent generates the code, and it is not what was meant. Even a carefully written spec has loose ends, and the model fills those gaps with its own assumptions. The code compiles, the tests pass — and the result is still wrong.
 
 The fix is a **grilling session**: before any code is written, the AI interviews the developer.
 
@@ -61,7 +61,7 @@ The `/grill-with-docs` skill treats the design as a tree of decisions. Each roun
 
 Two details make this work well in practice:
 
-- **Facts are found by the AI; decisions are left to the developer.** If a question can be answered by reading the codebase, the codebase is read instead of the developer being asked.
+- **Facts are found by the agent; decisions are left to the developer.** If a question can be answered by reading the codebase, the codebase is read instead of the developer being asked.
 - **No work is started until the developer confirms** that a shared understanding has been reached.
 
 A vague idea produces many rounds of questions. A well-considered plan produces few. In either case, the change is better understood at the end of the session than at the start.
@@ -74,7 +74,7 @@ A vague idea produces many rounds of questions. A well-considered plan produces 
 > 
 > Ask one question at a time.
 
-## The AI and the Developer Use the Same Terminology
+### The AI and the Developer Use the Same Terminology
 
 Every team has its own business vocabulary. Domain-Driven Design calls this the ***ubiquitous language***: one set of terms shared by the business, the developers, and the code.
 
@@ -94,7 +94,7 @@ The skill /grill-with-docs invokes /grilling and /domain-modeling skills. So the
 > 
 > Ask one question at a time.
 
-## Feedback Loops: Test-Driven Development
+### Feedback Loops: Test-Driven Development
 
 > "Always take small, deliberate steps. The rate of feedback is your speed limit. Never take on a task that's too big." — David Thomas & Andrew Hunt, *The Pragmatic Programmer*
 
@@ -123,7 +123,7 @@ The skill /implement invokes /tdd and /codebase-design skills.
 
 > /implement the ticket "01: Phase 1 — Insurance policy creation" under Phase 3. Do not commit the changes. I want to review the changes before commit. 
 
-## Design the Interface, Delegate the Implementation
+### Design the Interface, Delegate the Implementation
 
 > "The best modules are deep. They allow a lot of functionality to be accessed through a simple interface."
 — John Ousterhout, *A Philosophy of Software Design*
@@ -139,7 +139,7 @@ Deep is the goal; shallow is what to avoid.
 
 `/codebase-design` gives the agent these principles while code is being designed; `/to-spec` applies them before any code is written, settling the modules touched and the seams tested.
 
-## Avoid Building Too Much in One Go
+### Avoid Building Too Much in One Go
 
 > "Always take small, deliberate steps. The rate of feedback is your speed limit."
 — David Thomas & Andrew Hunt, *The Pragmatic Programmer*
@@ -159,7 +159,7 @@ Two skills keep the work small at two scales: `/tdd` inside a slice, where a sin
 
 > /to-tickets Generate tickets for the changes discussed above. 
 
-## Build Code According to Good Design Practices
+### Build Code According to Good Design Practices
 
 > "Invest in the design of the system *every day*."
 — Kent Beck, *Extreme Programming Explained*
@@ -170,7 +170,7 @@ Design therefore cannot be something done at the start of a project and then for
 
 The skills provided by Matt such as /tdd, /implement, /codebase-design, /to-tickets, /to-spec make sure that the good design principles are followed throughout.   
 
-## A Code Review That Checks the Spec, Not Just the Code
+### A Code Review That Checks the Spec, Not Just the Code
 
 **Most code-review prompts available online do general programming language code review: they inspect the code as code. Naming, duplication, error handling, null pointer exceptions**. What they never ask is whether the code does what was actually requested. An agent can produce a clean, idiomatic, well-tested implementation of the wrong feature, and a review of that kind will pass it.
 
@@ -185,94 +185,94 @@ The skills provided by Matt such as /tdd, /implement, /codebase-design, /to-tick
 
 > `/code-review` is invoked automatically at the end of `/implement`, and can also be run directly:
 
-## Adapt the Skills, Don't Be Tied to a Process
+### Adapt the Skills, Don't Be Tied to a Process
 
 Most AI development frameworks own the process: a fixed lifecycle, prescribed roles, and mandatory stages. That helps until something goes wrong inside the process itself, at which point there is little to reach for. 
 
 These skills are the opposite. Each is a short Markdown file that can be read in a minute, edited in place, or ignored entirely — and they compose without chaining, so no step is a precondition for the next. A workflow that misbehaves can be fixed rather than worked around.
 
-## More Than a Coding Workflow
+### More Than a Coding Workflow
 
-The skills are also worth reading as examples of the form. Each is a short Markdown file that states its discipline and stops — no preamble, no restating the obvious to the model. Teams writing their own skills learn more from these than from any guide, and \`writing-for-agents\` sets out the principles behind them explicitly. 
+Matt's skills go beyond writing code. `/teach` teaches a topic over several sessions rather than in one go. The mission, the sources, the lessons and a record of progress are saved as files, so each session picks up where the last one ended. A developer joining an unfamiliar codebase can point `/teach` at it and learn it piece by piece, and outside code it can teach subjects as varied as Korean, piano and cloud certifications.
 
-The set also goes beyond writing code. `/teach` runs a multi-session lesson using the working directory as a stateful workspace, and can teach subjects as varied as Korean, piano and cloud certifications; `/handoff` compacts a conversation so another agent can continue it; 
+`/handoff` summarises the current conversation into a document that another agent can pick up. It names the skills the next session should use, points to existing specs and tickets rather than repeating them, and removes anything sensitive such as API keys or passwords.
 
-`/writing-for-agents` covers how to write documents an agent will read — skills, `AGENTS.md`, `CLAUDE.md`, and anything reached by a pointer — so a draft skill can be written against its principles, or handed to the agent to be checked against them.
+`/writing-for-agents` is for writing the documents an agent reads: skills, `AGENTS.md` and `CLAUDE.md`. It can be used to write a skill from scratch, or to review one that has already been written. The review looks for the same problems every time: the same instruction repeated in two places, lines that no longer apply, and instructions the model would follow anyway. An instruction the model already obeys by default costs tokens and changes nothing.
 
-# Skills
+## Skills
 
-## User Invoked Vs Model Invoked Skills 
+### User Invoked Vs Model Invoked Skills 
 
 The skills split on one axis: who can invoke them. **User-invoked** skills — `/grill-with-docs`, `/to-spec`, `/to-tickets`, `/implement` — are typed by the developer and orchestrate a stage of work. **Model-invoked** skills — `/tdd`, `/codebase-design`, `/domain-modeling`, `/code-review` — hold reusable discipline and are reached for automatically when the task fits, which is why they rarely need naming.
 
-## Important Workflow Skills
+### Important Workflow Skills
 
-### **/setup-matt-pocock-skills** 
+#### **/setup-matt-pocock-skills** 
 
 Run once per repository, before anything else. Asks which issue tracker to use, which labels triage applies, and where generated docs should live. 
 
-### /grill-with-docs
+#### /grill-with-docs
 
-A relentless design interview that also builds the project's shared language. Combines \`/grilling\` and \`/domain-modeling\`: questions are asked in rounds until no branch of the design is left unresolved, while \`CONTEXT.md\` and ADRs are updated as decisions settle.  
+A relentless design interview that also builds the project's shared language. Combines `/grilling` and `/domain-modeling`: questions are asked in rounds until no branch of the design is left unresolved, while `CONTEXT.md` and ADRs are updated as decisions settle.  
 
-### /domain-modeling
+#### /domain-modeling
 
-Builds and sharpens the project's glossary. Terms that clash are challenged, fuzzy words are made precise, and each definition is written to \`CONTEXT.md\` as it is agreed. Normally reached through \`/grill-with-docs\`.  
+Builds and sharpens the project's glossary. Terms that clash are challenged, fuzzy words are made precise, and each definition is written to `CONTEXT.md` as it is agreed. Normally reached through `/grill-with-docs`.  
 
-### /to-spec
+#### /to-spec
 
 Turns the current conversation into a spec and publishes it to the issue tracker. No new interview: it synthesises what has already been discussed, and confirms which modules and seams the change will touch.  
 
-### /to-tickets
+#### /to-tickets
 
 Breaks a plan, spec or conversation into tracer-bullet tickets — vertical slices, each verifiable on its own and sized to fit one fresh context window — with the blocking order between them made explicit.  
 
-### /implement
+#### /implement
 
-Builds the work described by a spec or ticket, driving \`/tdd\` at the agreed seams, running type checks and tests as it goes, and closing with \`/code-review\` before committing.  
+Builds the work described by a spec or ticket, driving `/tdd` at the agreed seams, running type checks and tests as it goes, and closing with `/code-review` before committing.  
 
-### /tdd
+#### /tdd
 
 Red-green-refactor, one vertical slice at a time. Defines what a good test is, where tests belong, and which anti-patterns to reject.  
 
-### /codebase-design
+#### /codebase-design
 
 The shared vocabulary for designing deep modules: a lot of behaviour behind a small interface, placed at a clean seam and testable through it.  
 
-### /code-review
+#### /code-review
 
 Reviews the diff since a fixed point along two independent axes — Spec and Standards — each in its own sub-agent, and reports them side by side.  
 
-### /diagnosing-bugs
+#### /diagnosing-bugs
 
 A disciplined loop for hard bugs and performance regressions, gated phase by phase: build a feedback loop that goes red on this bug → minimise → hypothesise → instrument → fix → add a regression test. 
 
-## Other Useful Skills
+### Other Useful Skills
 
-### /grill-me
+#### /grill-me
 
 The same relentless design interview as `/grill-with-docs`, without the documentation step. The design is treated as a tree of decisions and worked in rounds: every question that can be answered now is asked together, each with a recommended answer, and the session ends only when no branch is left unvisited.
 
 Four things make it worth knowing separately: 
 
-- **It writes nothing**. No \`CONTEXT.md\` entries, no ADRs. The output is a shared understanding, not a document — so it can be used where there is no repository to write to. 
-- **It is tiny.** The skill file does one thing: invoke the underlying \`grilling\` interview. That same primitive sits behind \`/grill-with-docs\`, \`/triage\`, \`/wayfinder\` and \`/improve-codebase-architecture\`. 
+- **It writes nothing**. No `CONTEXT.md` entries, no ADRs. The output is a shared understanding, not a document — so it can be used where there is no repository to write to. 
+- **It is tiny.** The skill file does one thing: invoke the underlying `grilling` interview. That same primitive sits behind `/grill-with-docs`, `/triage`, `/wayfinder` and `/improve-codebase-architecture`. 
 - **It is not for developers only.** Any plan, decision or specification can be grilled. A product owner can use it to find the gaps and uncovered cases in a requirements document before it reaches engineering — the questions surface what the document left implicit. 
 - **It stands alone**. No repository, no issue tracker, no prior setup, and no other skill. It can be the only skill a person ever uses and still be worth having.
 
-### /handoff
+#### /handoff
 
 Compacts the current conversation into a handoff document so a fresh session, or another agent, can continue the work without repeating the investigation. 
 
-### /teach
+#### /teach
 
 Teaches a topic over several sessions rather than in one go: the mission, sources, lessons and a record of progress are saved as files, so each session picks up where the last one ended. **A developer joining an unfamiliar codebase can point `/teach` at it and learn it piece by piece**.
 
-### /writing-for-agents
+#### /writing-for-agents
 
-How to write documents an agent will read: skills, \`AGENTS.md\`, \`CLAUDE.md\`, and anything reached by a pointer. Useful both for drafting a skill and for having a draft checked against its principles.
+How to write documents an agent will read: skills, `AGENTS.md`, `CLAUDE.md`, and anything reached by a pointer. Useful both for drafting a skill and for having a draft checked against its principles.
 
-# Typical Workflow
+## Typical Workflow
 
 Most work follows the same three steps.
 
@@ -287,13 +287,14 @@ The sequence is a habit, not a rule. What matters is the order of concerns — a
 
 **Most AI workflows share this broad shape but leave out its most valuable parts: no grilling session before code is written, no review in an isolated context, and no check that the finished code matches what was originally asked for.**
 
-## Worked Example: One Feature, Three Prompts Workflow Prompts
+### The Prompts Used to Implement One Feature
+
+The prompts below were used to implement one small feature. Steps 1 and 2 were run in one session, step 3 in a new one.
 
 Step 1: /grill-with-docs — reach a shared understanding: 
 
 > /grill-with-docs See the requirements in @docs/requirements/feature-requirements.md.
-These will be implemented iteratively. Ask questions only about the Phase 2a requirement
-under "Reporting Pipeline Endpoint". Do not ask about the later phases yet, including 2b and 2c.
+These will be implemented iteratively. Ask questions only about the Phase 2a requirement under "Reporting Pipeline Endpoint". Do not ask about the later phases yet, including 2b and 2c.
 Ask one question at a time.
 
 Step 2: /to-tickets — break it into a verifiable slice
@@ -305,7 +306,7 @@ Step 3: /implement — build it, review before committing
 > /implement the ticket "01: Phase 2a — Reporting Pipeline Endpoint".
 Do not commit the changes. They will be reviewed first.
 
-# The Grilling Skills: `/grill-me` and `/grill-with-docs`
+## The Grilling Skills: `/grill-me` and `/grill-with-docs`
 
 These are among the most useful skills in the set. Even a well-written ticket leaves gaps where the model has to guess, and the model turns out to be very good at finding exactly those edge cases and asking about them. Both skills run the same relentless interview: rounds of questions until the developer and the agent share one understanding of what is being built.
 
@@ -335,7 +336,7 @@ background, and a genuine trade-off. Most sessions write none, and that is norma
 
 The understanding built during the session is the valuable part, so a fresh conversation should not be started once it ends. That context can be handed to `/to-spec` to be written up as a spec, or to `/to-tickets` to be turned directly into tickets, which is quicker and suits smaller changes.
 
-# The Classic Sources Behind the Skills
+## The Classic Sources Behind the Skills
 
 These skills don't invent a methodology. Each takes a principle that software engineering already trusts and wires it into the way an agent works — so the table below reads as a map from old book, to principle, to the skills that apply it.
 
@@ -348,7 +349,7 @@ These skills don't invent a methodology. Each takes a principle that software en
 | *Refactoring* — Martin Fowler | Code smells (the review baseline) | `/code-review` |
 | *Extreme Programming Explained* / TDD — Kent Beck | Test-driven development; continuous design | `/tdd`, `/implement`, `/improve-codebase-architecture` |
 
-# What the Agent Missed, and Where to Watch
+## What the Agent Missed, and Where to Watch
 
 On a recent greenfield application, the results were strong. The modularisation and design were excellent, the generated code was clean, and the tests were meaningful rather than decorative. Most of the work needed no intervention at all.
 
@@ -356,7 +357,7 @@ In a minority of cases, though, the developer had to look closely.
 
 > **Note:** The misses below are not attributable to Matt Pocock's skills. They reflect general model behaviour, or missing instructions in `AGENTS.md` and the team's own skills — and most were resolved by adding the instruction that was absent.
 
-## Observed Gaps
+### Observed Gaps
 
 - **An outdated version of a new dependency.** A library was added correctly, but pinned to an old version. Nothing in the code looked wrong; the developer had to check the version explicitly.
 - **Field and type mismatches in generated classes.** A few classes declared fields whose types did not match the values actually assigned to them.
@@ -369,21 +370,21 @@ In a minority of cases, though, the developer had to look closely.
 - **The same constant declared in several classes.** The agent was asked to extract them into a single constants class.
 - **An implementation fitted to the first ticket only.** All field and property names followed the first data source. A second source, whose naming differed considerably, had not been allowed for — the instructions had never asked for a design that would accommodate it.
 
-# Installation of Matt’s Skills
+## Installation of Matt’s Skills
 
-## Claude Code
+### Claude Code
 
 Terminal Command:
 
 > claude plugins install mattpocock-skills
 
-# Conclusion
+## Conclusion
 
 A good codebase is one that is easy to understand and easy to change. That has always been true, but it matters more now than it used to: an agent works well in a well-structured codebase and badly in a tangled one, so bad code has become the most expensive it has ever been.
 
 In the project where these skills were used, the module structure and the division of work were both easy to follow and easy to modify.
 
-# References
+## References
 
 **Design, Code Best Practices**
 <https://www.youtube.com/watch?v=v4F1gFy-hqg>
