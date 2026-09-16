@@ -317,14 +317,6 @@ These skills don't invent a methodology. Each takes a principle that software en
 | *Refactoring* — Martin Fowler | Code smells (the review baseline) | `/code-review` |
 | *Extreme Programming Explained* / TDD — Kent Beck | Test-driven development; continuous design | `/tdd`, `/implement`, `/improve-codebase-architecture` |
 
-## What the Agent Missed, and Where to Watch
-
-On a recent greenfield application, the results were strong. The modularisation and design were excellent, the generated code was clean, and the tests were meaningful rather than decorative. Most of the work needed no intervention at all.
-
-In a minority of cases, though, the developer had to look closely.
-
-> **Note:** The misses below are NOT attributable to Matt Pocock's skills. They reflect general agent behaviour, or missing instructions in `AGENTS.md` and the team's own skills — and most were resolved by adding the instruction that was absent.
-
 ## Installation of Matt’s Skills
 
 ### Claude Code
@@ -334,6 +326,8 @@ Terminal Command:
 > claude plugins install mattpocock-skills
 
 ## Conclusion
+
+On a recent greenfield application built with these skills, the results were strong. The modularisation and design were excellent, the generated code was clean, and the tests were meaningful rather than decorative. The module structure and the division of work were both easy to follow and easy to modify.
 
 A good codebase is one that is easy to understand and easy to change. That has always been true, but it matters more now than it used to: an agent works well in a well-structured codebase and badly in a tangled one, so bad code has become the most expensive it has ever been.
 
