@@ -66,7 +66,7 @@ Two details make this work well in practice:
 
 A vague idea produces many rounds of questions. A well-considered plan produces few. In either case, the change is better understood at the end of the session than at the start.
 
-### The AI and the Developer Use the Same Terminology
+### The Agent and the Developer Use the Same Terminology
 
 Every team has its own business vocabulary. Domain-Driven Design calls this the ***ubiquitous language***: one set of terms shared by the business, the developers, and the code.
 
@@ -98,6 +98,8 @@ The discipline enforced around that loop is what makes it real, not just an idea
 - **Vertical slices, not horizontal ones.** An agent's instinct is to build each layer in isolation: asked for a database service, it produces every endpoint, the request models, error middleware, auth, rate limiting and logging — and only then tries to connect to the database, where the connection string turns out to be wrong. A **tracer bullet** is the opposite: one thin slice cut through every layer at once, tested immediately, so the critical path is proven before anything is widened.
 - **Behavior is tested, not implementation.** Tests are placed at a **seam**. A good test reads like a specification and survives refactoring.
 - **Seams are settled before any test exists.** The agent proposes them and the developer confirms — never discovered along the way.
+
+`/tdd` is not usually called directly. `/implement` invokes it, along with `/codebase-design`.
 
 ### Design the Interface, Delegate the Implementation
 
@@ -162,6 +164,8 @@ Most AI development frameworks own the process: a fixed lifecycle, prescribed ro
 These skills are the opposite. Each is a short Markdown file that can be read in a minute, edited in place, or ignored entirely — and they compose without chaining, so no step is a precondition for the next. A workflow that misbehaves can be fixed rather than worked around.
 
 ### More Than a Coding Workflow
+
+The skills are also worth reading as examples of how to write a skill. Each one is a short Markdown file that says what it wants and stops — no preamble, no telling the model things it already knows. A team writing its own skills will learn more from reading these than from any guide.
 
 Matt's skills go beyond writing code. `/teach` teaches a topic over several sessions rather than in one go. The mission, the sources, the lessons and a record of progress are saved as files, so each session picks up where the last one ended. A developer joining an unfamiliar codebase can point `/teach` at it and learn it piece by piece, and outside code it can teach subjects as varied as Korean, piano and cloud certifications.
 
