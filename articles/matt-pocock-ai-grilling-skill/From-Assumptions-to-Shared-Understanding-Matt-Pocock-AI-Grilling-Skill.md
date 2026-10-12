@@ -32,6 +32,8 @@ All three run the same interview. They differ in who starts them, what they read
 
 ## Installation of Matt Pocock Skills
 
+A plugin bundles all of Matt's skills together, so installing the plugin is the easiest way to get every skill at once - grab a single skill instead (see "Installing Grilling Skill Alone" below) only when just one, such as `grilling`, is specifically needed.
+
 ### Claude Code Terminal
 
 The suggested way to install Matt’s skills, per the project’s GitHub page, is via the official Claude marketplace:
@@ -51,6 +53,12 @@ To update Matt’s skills, execute the following commands in a terminal window:
 
 > claude plugin marketplace update mattpocock
 claude plugin update mattpocock-skills@mattpocock
+
+### Claude Code Terminal - Adding Atlassian Rovo MCP Server
+
+To install the Atlassian Rovo MCP server, use the following command:
+
+> claude mcp add --transport http atlassian-mcp-v2 https://mcp.atlassian.com/v2/mcp --scope user
 
 ### Claude Code VS Code Extension 
 
