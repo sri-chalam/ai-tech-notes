@@ -17,8 +17,10 @@
 
 - The model's **ability to reason goes down as the number of tokens in a session goes up**.
   - A short session is the *smart zone*. A long, crowded session is the *dumb zone*.
-  - When a session uses **around 40% of the total allowed tokens**, it enters the dumb zone, as a rule of thumb.
+  - When a session uses **around 40–60% of the total allowed tokens**, it starts to enter the dumb zone, as a rule of thumb.
   - Dex Horthy calls this the **"dumb zone"**: the more context you add, the worse the model gets. Clear the context before it fills up.
+- When a session **starts to enter the dumb zone**, use a **hand-off skill**. It works like the model's *compress* (compaction) feature.
+  - It **summarizes the key points** of the current session. Then you can continue in a **new session** with a clean context.
 - Start a **new session for each logically different question**.
 - Do research in a **separate session or model**. Do not fill the working session with tangential conversation and pollute the session.
 
