@@ -12,6 +12,21 @@
 - Add only what the agent **cannot learn from the code**, such as build and test commands, unusual conventions, and hard boundaries (for example, "never commit secrets").
 - Ask for each line: *"If I remove this, will the agent make a mistake?"* If not, delete it.
 - Move task-specific details to **separate files, skills, or path-scoped rules**. The agent then loads them only when needed.
+- Write the instructions in **AGENTS.md**, then create a **relative symbolic link** from **CLAUDE.md** to it. Claude does not read AGENTS.md, but it follows the link to CLAUDE.md. This way, one file works for all agents.
+  - Run in the project root: `ln -s AGENTS.md CLAUDE.md`
+
+## 🔁 Turn Agent Mistakes into AGENTS.md Rules
+
+When the agent makes a mistake or **goes in the wrong direction**, do not only fix the result. **Fix the cause.**
+
+- Ask the agent: *"What rule could have prevented this?"*
+- The agent suggests a rule. **Add it to AGENTS.md.**
+- Keep the rule **short**, and add it only if the mistake is likely to **happen again** (see the section above).
+- **Review the rules from time to time.** Models keep improving, so a rule that was needed before may not be needed in a newer model. Remove it if the model no longer makes the mistake.
+
+**Example:** The Claude Code sandbox blocked access to the Maven public repo. Claude assumed the restriction was normal and tried many workarounds. It should have **told me that the sandbox blocked the connection**. A rule in AGENTS.md fixes this:
+
+> If a command fails because of a sandbox restriction, stop and tell the user. Do not try workarounds.
 
 ## 🧠 Smart Zone vs Dumb Zone
 
@@ -34,6 +49,7 @@
 - Good verification is **not easy to add**. It usually needs **a significant number of tests**.
   - Add the tests first, so the model can run them after every change.
 - Fix the failing tests, then **check the coverage**. Do the tests cover all the known and unexpected results.
+- Ideally, **write evals for every AI skill**. Evals show whether a skill or rule still helps, and whether it still works after a model upgrade.
 
 ## 🔀 Use the Right Model for Each Job
 
