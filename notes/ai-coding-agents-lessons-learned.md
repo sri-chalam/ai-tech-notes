@@ -21,6 +21,8 @@
   - Dex Horthy calls this the **"dumb zone"**: the more context you add, the worse the model gets. Clear the context before it fills up.
 - When a session **starts to enter the dumb zone**, use a **hand-off skill**. It works like the model's *compress* (compaction) feature.
   - It **summarizes the key points** of the current session. Then you can continue in a **new session** with a clean context.
+- Do **not implement a big requirement in one session**. It uses **too many tokens** and pushes the session into the dumb zone.
+  - Instead, **split the spec into smaller tickets**. **Implement each ticket separately**, in its own session.
 - Start a **new session for each logically different question**.
 - Do research in a **separate session or model**. Do not fill the working session with tangential conversation and pollute the session.
 
